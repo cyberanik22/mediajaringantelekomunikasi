@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT PTS Media Jaringan Telekomunikasi - X TJKT</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body{-webkit-tap-highlight-color:transparent}
+  .opt.sel{border-color:#4f46e5;background:#eef2ff}
+  .opt.sel .bul{background:#4f46e5;color:#fff;border-color:#4f46e5}
+  ::-webkit-scrollbar{width:6px;height:6px}
+  ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9999px}
+</style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased">
+
+<!-- ================= LOGIN ================= -->
+<section id="scr-login" class="min-h-screen flex items-center justify-center p-4">
+  <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-6 sm:p-8">
+    <div class="text-center mb-6">
+      <div class="w-14 h-14 mx-auto rounded-xl bg-indigo-600 text-white grid place-items-center text-2xl font-bold">CBT</div>
+      <h1 class="mt-4 text-xl font-bold leading-snug">Penilaian Tengah Semester</h1>
+      <p class="text-sm text-slate-500 mt-1">Media Jaringan Telekomunikasi &middot; Kelas X TJKT</p>
+    </div>
+
+    <div class="grid grid-cols-3 gap-2 text-center text-xs mb-6">
+      <div class="bg-slate-50 rounded-lg py-3"><div class="font-bold text-lg text-indigo-600">50</div>Soal</div>
+      <div class="bg-slate-50 rounded-lg py-3"><div class="font-bold text-lg text-indigo-600">90</div>Menit</div>
+      <div class="bg-slate-50 rounded-lg py-3"><div class="font-bold text-lg text-indigo-600">75</div>KKM</div>
+    </div>
+
+    <label class="block text-sm font-medium mb-1">Nama Lengkap</label>
+    <input id="in-nama" type="text" placeholder="Tulis nama kamu"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+    <label class="block text-sm font-medium mb-1">Kelas</label>
+    <input id="in-kelas" type="text" placeholder="Contoh: X TJKT 1"
+      class="w-full border border-slate-300 rounded-lg px-3 py-2.5 mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+
+    <label class="flex items-center gap-2 text-sm mb-5 select-none">
+      <input id="in-acak" type="checkbox" checked class="w-4 h-4 accent-indigo-600">
+      Acak urutan soal dan pilihan jawaban
+    </label>
+
+    <p id="login-err" class="hidden text-sm text-red-600 mb-3"></p>
+    <button id="btn-mulai" class="w-full bg-indigo-600 hover:bg-indigo-700 active:scale-[.99] transition text-white font-semibold rounded-lg py-3">
+      Mulai Ujian
+    </button>
+    <p class="text-[11px] text-slate-400 text-center mt-4 leading-relaxed">
+      Pastikan koneksi stabil. Waktu terus berjalan walau halaman ditutup paksa, jadi kerjakan sampai selesai.
+    </p>
+  </div>
+</section>
+
+<!-- ================= UJIAN ================= -->
+<section id="scr-ujian" class="hidden min-h-screen pb-28">
+  <header class="sticky top-0 z-20 bg-white border-b border-slate-200">
+    <div class="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="min-w-0 flex-1">
+        <p id="hd-nama" class="text-sm font-semibold truncate">-</p>
+        <p class="text-[11px] text-slate-500">PTS Media Jaringan Telekomunikasi</p>
+      </div>
+      <div id="hd-timer" class="font-mono font-bold text-lg bg-slate-100 rounded-lg px-3 py-1.5 tabular-nums">90:00</div>
+      <button id="btn-nav" class="lg:hidden bg-slate-100 rounded-lg px-3 py-2 text-sm font-medium">Nomor</button>
+    </div>
+    <div class="h-1 bg-slate-200"><div id="bar" class="h-1 bg-indigo-600 transition-all" style="width:0%"></div></div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 pt-5">
+    <div class="flex items-center justify-between mb-3">
+      <span id="q-index" class="text-sm font-semibold text-indigo-600">Soal 1 dari 50</span>
+      <span id="q-topik" class="text-[11px] bg-slate-200 text-slate-600 rounded-full px-2.5 py-1">-</span>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-sm p-4 sm:p-5">
+      <p id="q-teks" class="leading-relaxed text-[15px] sm:text-base"></p>
+      <div id="q-opsi" class="mt-4 space-y-2.5"></div>
+    </div>
+
+    <div class="flex gap-2 mt-4">
+      <button id="btn-prev" class="flex-1 bg-white border border-slate-300 rounded-lg py-3 font-medium disabled:opacity-40">Sebelumnya</button>
+      <button id="btn-next" class="flex-1 bg-indigo-600 text-white rounded-lg py-3 font-medium">Selanjutnya</button>
+    </div>
+    <button id="btn-selesai" class="w-full mt-2 bg-emerald-600 text-white rounded-lg py-3 font-semibold">Selesai &amp; Kumpulkan</button>
+  </main>
+
+  <!-- panel nomor -->
+  <div id="panel" class="hidden fixed inset-0 z-30 bg-black/40" >
+    <div class="absolute bottom-0 inset-x-0 bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="font-semibold">Daftar Nomor Soal</h3>
+        <button id="btn-tutup" class="text-slate-400 text-2xl leading-none px-2">&times;</button>
+      </div>
+      <div class="flex gap-4 text-[11px] text-slate-500 mb-3">
+        <span class="flex items-center gap-1.5"><i class="w-3 h-3 rounded bg-indigo-600 inline-block"></i>Sudah dijawab</span>
+        <span class="flex items-center gap-1.5"><i class="w-3 h-3 rounded bg-slate-200 inline-block"></i>Belum dijawab</span>
+      </div>
+      <div id="grid-nomor" class="grid grid-cols-6 sm:grid-cols-10 gap-2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HASIL ================= -->
+<section id="scr-hasil" class="hidden min-h-screen pb-16">
+  <div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6 text-center">
+      <p class="text-sm text-slate-500">Hasil Ujian</p>
+      <h2 id="hs-nama" class="text-lg font-bold mt-1">-</h2>
+      <div id="hs-nilai" class="text-6xl font-extrabold my-4 text-indigo-600">0</div>
+      <p id="hs-status" class="inline-block text-sm font-semibold rounded-full px-4 py-1.5">-</p>
+      <div class="grid grid-cols-3 gap-2 mt-6 text-center text-sm">
+        <div class="bg-emerald-50 rounded-lg py-3"><div id="hs-benar" class="font-bold text-xl text-emerald-600">0</div>Benar</div>
+        <div class="bg-red-50 rounded-lg py-3"><div id="hs-salah" class="font-bold text-xl text-red-500">0</div>Salah</div>
+        <div class="bg-slate-50 rounded-lg py-3"><div id="hs-kosong" class="font-bold text-xl text-slate-500">0</div>Kosong</div>
+      </div>
+      <div id="hs-rekap" class="mt-5 space-y-2 text-left"></div>
+      <div class="flex gap-2 mt-6">
+        <button id="btn-review" class="flex-1 bg-indigo-600 text-white rounded-lg py-3 font-medium">Lihat Pembahasan</button>
+        <button id="btn-ulang" class="flex-1 bg-white border border-slate-300 rounded-lg py-3 font-medium">Ulangi</button>
+      </div>
+    </div>
+    <div id="review" class="hidden mt-6 space-y-3"></div>
+  </div>
+</section>
+
+<!-- ================= MODAL KONFIRMASI ================= -->
+<div id="modal" class="hidden fixed inset-0 z-40 bg-black/50 grid place-items-center p-4">
+  <div class="bg-white rounded-2xl p-6 w-full max-w-sm text-center">
+    <h3 class="font-bold text-lg">Kumpulkan jawaban?</h3>
+    <p id="modal-teks" class="text-sm text-slate-500 mt-2">-</p>
+    <div class="flex gap-2 mt-5">
+      <button id="modal-batal" class="flex-1 border border-slate-300 rounded-lg py-2.5 font-medium">Batal</button>
+      <button id="modal-ok" class="flex-1 bg-emerald-600 text-white rounded-lg py-2.5 font-medium">Kumpulkan</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const BANK = [{"no": 1, "soal": "Model OSI dikembangkan oleh sebuah badan standar internasional agar proses komunikasi data antar perangkat dari vendor berbeda menjadi seragam. Badan standar yang dimaksud adalah ...", "opsi": ["ISO (International Organization for Standardization)", "IEEE (Institute of Electrical and Electronics Engineers)", "ITU (International Telecommunication Union Standard)", "ANSI (American National Standards Institute Global)", "IETF (Internet Engineering Task Force Association)"], "kunci": 0, "pembahasan": "Model OSI diterbitkan oleh ISO pada tahun 1984 sebagai kerangka standar komunikasi data tujuh lapisan.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 2, "soal": "Urutan lapisan model OSI yang benar mulai dari layer 1 sampai layer 7 adalah ...", "opsi": ["Physical, Data Link, Transport, Network, Session, Presentation, Application", "Application, Session, Presentation, Transport, Data Link, Network, Physical", "Physical, Data Link, Network, Transport, Session, Presentation, Application", "Physical, Network, Data Link, Transport, Presentation, Session, Application", "Application, Presentation, Session, Transport, Network, Data Link, Physical"], "kunci": 2, "pembahasan": "Layer 1 selalu dimulai dari Physical dan berakhir di Application pada layer 7. Urutan terbalik dipakai saat data dikirim dari aplikasi ke media.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 3, "soal": "Lapisan OSI yang bertugas menentukan jalur terbaik pengiriman data serta menangani pengalamatan logis berupa IP address adalah ...", "opsi": ["Transport layer (lapisan keempat)", "Data Link layer (lapisan kedua)", "Session layer (lapisan kelima)", "Physical layer (lapisan pertama)", "Network layer (lapisan ketiga)"], "kunci": 4, "pembahasan": "Network layer mengurus IP address dan routing, yaitu memilih jalur terbaik menuju jaringan tujuan.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 4, "soal": "Protocol Data Unit (PDU) yang digunakan pada lapisan Transport adalah ...", "opsi": ["Stream, yaitu data mentah dari aplikasi", "Segment, yaitu data yang diberi header TCP", "Frame, yaitu data yang diberi header MAC", "Packet, yaitu data yang diberi header IP", "Bit, yaitu deretan sinyal listrik 0 dan 1"], "kunci": 1, "pembahasan": "Di Transport layer data dipecah menjadi segment dan diberi header TCP berisi nomor urut serta nomor port.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 5, "soal": "Protokol HTTP, FTP, dan SMTP yang dipakai pengguna sehari-hari bekerja pada lapisan ...", "opsi": ["Transport layer (lapisan keempat)", "Session layer (lapisan kelima)", "Network layer (lapisan ketiga)", "Application layer (lapisan ketujuh)", "Presentation layer (lapisan keenam)"], "kunci": 3, "pembahasan": "HTTP, FTP, dan SMTP adalah protokol layanan yang langsung berhubungan dengan aplikasi pengguna, sehingga berada di Application layer.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 6, "soal": "Proses penambahan header pada setiap lapisan ketika data bergerak turun dari layer 7 menuju layer 1 disebut ...", "opsi": ["Fragmentasi data", "Multiplexing data", "Sinkronisasi data", "Enkapsulasi data", "Dekapsulasi data"], "kunci": 3, "pembahasan": "Enkapsulasi adalah pembungkusan data dengan header di tiap lapisan saat pengiriman. Kebalikannya, dekapsulasi, terjadi di sisi penerima.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 7, "soal": "Fungsi utama lapisan Data Link dalam model OSI adalah ...", "opsi": ["Mengatur format dan enkripsi data sebelum ditampilkan", "Mengubah packet menjadi frame dan menambahkan alamat MAC", "Mengubah frame menjadi bit lalu mengirimnya lewat kabel", "Menentukan jalur terbaik pengiriman data antar jaringan", "Membagi data menjadi segment dan mengatur nomor urutnya"], "kunci": 1, "pembahasan": "Data Link layer membungkus packet dari layer 3 menjadi frame dan menambahkan alamat MAC pengirim serta penerima.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 8, "soal": "Hub dan repeater merupakan perangkat yang hanya meneruskan sinyal tanpa mengenal alamat. Kedua perangkat ini bekerja pada ...", "opsi": ["Data Link layer (lapisan kedua)", "Transport layer (lapisan keempat)", "Network layer (lapisan ketiga)", "Session layer (lapisan kelima)", "Physical layer (lapisan pertama)"], "kunci": 4, "pembahasan": "Hub dan repeater hanya mengurus sinyal listrik, tidak membaca MAC maupun IP, sehingga berada di Physical layer.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 9, "soal": "TCP dan UDP sama-sama bekerja pada lapisan Transport. Perbedaan mendasar keduanya adalah ...", "opsi": ["TCP hanya dipakai video call, UDP hanya dipakai kirim email", "TCP memakai alamat MAC, UDP memakai alamat IP tujuannya", "TCP menjamin data sampai lengkap, UDP tidak menjaminnya", "TCP tidak memerlukan koneksi, UDP justru memerlukannya", "TCP bekerja pada layer tiga, UDP bekerja pada layer empat"], "kunci": 2, "pembahasan": "TCP bersifat connection oriented dan melakukan pengiriman ulang bila ada paket hilang, sedangkan UDP connectionless dan tidak menjamin kelengkapan data.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 10, "soal": "Lapisan OSI yang bertanggung jawab mengurus enkripsi, kompresi, serta format data seperti JPEG dan ASCII adalah ...", "opsi": ["Presentation layer (lapisan keenam)", "Application layer (lapisan ketujuh)", "Transport layer (lapisan keempat)", "Session layer (lapisan kelima)", "Network layer (lapisan ketiga)"], "kunci": 0, "pembahasan": "Presentation layer menerjemahkan format data, melakukan kompresi, dan mengurus enkripsi agar data dikenali aplikasi penerima.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 11, "soal": "Tugas utama lapisan Session pada model OSI adalah ...", "opsi": ["Mengubah data digital menjadi sinyal listrik di kabel", "Menerjemahkan nama domain menjadi alamat IP tujuan", "Membangun, mengelola, dan mengakhiri sesi komunikasi", "Membagi data besar menjadi beberapa segment kecil", "Menentukan rute paket melewati banyak jaringan lain"], "kunci": 2, "pembahasan": "Session layer mengatur dimulainya, berlangsungnya, dan berakhirnya sesi komunikasi antara dua perangkat.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG Biasa"}, {"no": 12, "soal": "Seorang teknisi tidak dapat membuka situs www.sekolah.sch.id dari browser, namun ketika alamat diganti menjadi 192.168.1.10 halaman terbuka normal. Gangguan tersebut paling tepat dianalisis terjadi pada ...", "opsi": ["Network layer, karena routing antar jaringan sedang putus", "Physical layer, karena kabel jaringan tidak tersambung rapat", "Transport layer, karena port TCP 80 sedang diblokir firewall", "Data Link layer, karena tabel MAC address switch sudah penuh", "Application layer, karena layanan DNS sedang bermasalah"], "kunci": 4, "pembahasan": "Karena akses lewat IP berhasil, jalur fisik dan routing sehat. Yang gagal hanya penerjemahan nama domain oleh DNS, dan DNS bekerja di Application layer.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG HOTs"}, {"no": 13, "soal": "File berukuran 4 MB dikirim ke server dan diterima lengkap serta urut, meskipun jaringan sempat tersendat di tengah proses. Lapisan yang paling berperan menjamin hal tersebut adalah ...", "opsi": ["Transport layer, karena mengatur nomor urut dan pengiriman ulang", "Network layer, karena memilih rute tercepat menuju server tujuan", "Data Link layer, karena memeriksa error tiap frame memakai CRC", "Session layer, karena menjaga sesi tetap hidup selama transfer data", "Physical layer, karena menstabilkan sinyal listrik di dalam kabel"], "kunci": 0, "pembahasan": "TCP di Transport layer memberi nomor urut tiap segment dan mengirim ulang segment yang hilang, sehingga file tersusun kembali secara utuh dan berurutan.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG HOTs"}, {"no": 14, "soal": "Dua komputer terhubung pada satu switch dengan IP 192.168.1.5/24 dan 192.168.2.7/24. Lampu link menyala normal, tetapi keduanya tidak bisa saling ping. Analisis yang paling tepat adalah ...", "opsi": ["Masalah di Data Link layer karena kedua MAC address bentrok", "Masalah di Transport layer karena port ICMP belum dibuka admin", "Masalah di Session layer karena sesi ping belum sempat terbentuk", "Masalah di Network layer karena beda network wajib lewat router", "Masalah di Physical layer karena kabel yang dipakai jenis cross"], "kunci": 3, "pembahasan": "Lampu link normal berarti layer 1 dan 2 sehat. Kedua host berada di network berbeda (192.168.1.0 dan 192.168.2.0), sehingga butuh routing di layer 3.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG HOTs"}, {"no": 15, "soal": "Sebuah paket data tiba di komputer penerima. Urutan proses dekapsulasi yang benar dari layer terbawah menuju layer teratas adalah ...", "opsi": ["Frame, lalu bit, lalu segment, lalu packet, lalu data aplikasi", "Bit, lalu frame, lalu packet, lalu segment, lalu data aplikasi", "Data aplikasi, lalu segment, lalu packet, lalu frame, lalu bit", "Packet, lalu bit, lalu frame, lalu segment, lalu data aplikasi", "Segment, lalu packet, lalu bit, lalu frame, lalu data aplikasi"], "kunci": 1, "pembahasan": "Penerima membaca sinyal (bit) di layer 1, menyusunnya jadi frame di layer 2, packet di layer 3, segment di layer 4, hingga menjadi data utuh di aplikasi.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG HOTs"}, {"no": 16, "soal": "Aplikasi video conference sekolah sering tersendat. Admin memutuskan memakai protokol UDP dan bukan TCP untuk aliran videonya. Alasan yang paling tepat adalah ...", "opsi": ["UDP mengirim ulang paket hilang sehingga suara tidak akan putus", "UDP mengirim data lebih cepat karena tanpa proses konfirmasi", "UDP menjamin seluruh paket sampai sehingga gambar lebih halus", "UDP bekerja pada Network layer sehingga rute yang dilalui pendek", "UDP mengenkripsi data video sehingga ukuran paket menjadi ringan"], "kunci": 1, "pembahasan": "UDP tidak melakukan handshake dan tidak menunggu konfirmasi, sehingga latensi rendah. Untuk video real time, kecepatan lebih penting daripada kelengkapan paket.", "topik": "Dasar-dasar OSI Layer", "tipe": "PG HOTs"}, {"no": 17, "soal": "Perangkat jaringan yang meneruskan data hanya ke port tujuan berdasarkan tabel MAC address adalah ...", "opsi": ["Repeater", "Modem ADSL", "Media converter", "Switch", "Hub"], "kunci": 3, "pembahasan": "Switch mencatat MAC address tiap port dalam MAC address table, sehingga frame dikirim hanya ke port tujuan.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 18, "soal": "Perangkat yang berfungsi menghubungkan dua jaringan dengan alamat network berbeda adalah ...", "opsi": ["Bridge", "Access point", "Router", "Repeater", "Hub pasif"], "kunci": 2, "pembahasan": "Router bekerja di layer 3 dan memakai routing table untuk meneruskan paket antar network yang berbeda.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 19, "soal": "Fungsi utama repeater dalam sebuah jaringan komputer adalah ...", "opsi": ["Memperkuat dan meregenerasi sinyal agar jangkauan bertambah", "Membagi alamat IP secara otomatis kepada klien di jaringan", "Menyaring paket data berdasarkan aturan keamanan tertentu", "Menerjemahkan alamat IP privat menjadi alamat IP publik", "Menyimpan tabel MAC address seluruh perangkat yang terhubung"], "kunci": 0, "pembahasan": "Repeater menerima sinyal yang mulai melemah, menguatkannya kembali, lalu meneruskannya sehingga jarak jangkauan bertambah.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 20, "soal": "Setiap Network Interface Card (NIC) memiliki identitas unik yang diberikan pabrik berupa ...", "opsi": ["IP address sepanjang 32 bit", "Port number sepanjang 16 bit", "Subnet mask sepanjang 32 bit", "Broadcast address 48 bit", "MAC address sepanjang 48 bit"], "kunci": 4, "pembahasan": "MAC address adalah alamat fisik 48 bit yang ditanam permanen pada NIC dan bersifat unik di seluruh dunia.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 21, "soal": "Fungsi utama modem dalam sebuah jaringan komputer adalah ...", "opsi": ["Menghubungkan dua jaringan berbeda alamat IP", "Meneruskan frame berdasarkan tabel MAC address", "Memperluas jangkauan sinyal wireless di ruangan", "Membagikan alamat IP otomatis lewat layanan DHCP", "Melakukan modulasi dan demodulasi sinyal data"], "kunci": 4, "pembahasan": "Nama modem berasal dari modulator-demodulator, yaitu mengubah sinyal digital menjadi analog dan sebaliknya.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 22, "soal": "Pernyataan yang paling tepat mengenai perbedaan hub dan switch adalah ...", "opsi": ["Hub membagi bandwidth ke semua port, switch tidak membaginya", "Hub bekerja pada layer dua, sedangkan switch bekerja di layer satu", "Hub memiliki tabel MAC address, sedangkan switch tidak memilikinya", "Hub mendukung full duplex, sedangkan switch hanya half duplex saja", "Hub dapat memisah broadcast domain, switch tidak dapat memisahnya"], "kunci": 0, "pembahasan": "Semua port hub berbagi satu jalur sehingga bandwidth terbagi dan sering terjadi tabrakan data, sedangkan tiap port switch mendapat bandwidth penuh.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 23, "soal": "Perangkat yang bertugas menyaring lalu lintas data masuk dan keluar berdasarkan aturan keamanan adalah ...", "opsi": ["Hub", "Firewall", "Repeater", "Patch panel", "Media converter"], "kunci": 1, "pembahasan": "Firewall memeriksa paket berdasarkan aturan (rule) yang dibuat admin, lalu mengizinkan atau menolak lalu lintas tersebut.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 24, "soal": "Keunggulan switch manageable dibandingkan switch unmanageable adalah ...", "opsi": ["Tidak memerlukan alamat IP untuk keperluan manajemen", "Jumlah port selalu lebih banyak daripada tipe biasa", "Hanya dapat digunakan pada jaringan berskala rumahan", "Dapat dikonfigurasi VLAN dan dipantau melalui aplikasi", "Harga lebih murah dan dapat dipakai tanpa konfigurasi"], "kunci": 3, "pembahasan": "Switch manageable bisa dikonfigurasi (VLAN, trunk, monitoring) melalui web atau CLI, sedangkan unmanageable langsung pakai tanpa pengaturan.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 25, "soal": "Setiap port pada switch merupakan satu collision domain tersendiri. Pernyataan tersebut berarti ...", "opsi": ["Kecepatan setiap port otomatis menurun ketika port lain ikut aktif", "Data dari satu port selalu diteruskan ke seluruh port yang lainnya", "Tabrakan data antar port dapat dihindari sehingga transfer stabil", "Semua port berbagi satu jalur sehingga sering terjadi tabrakan data", "Broadcast domain ikut terpisah pada masing-masing port di switch"], "kunci": 2, "pembahasan": "Karena tiap port punya collision domain sendiri, data dari port berbeda tidak saling bertabrakan sehingga pengiriman lebih stabil.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 26, "soal": "Kelompok perangkat berikut yang sama-sama bekerja pada Physical layer adalah ...", "opsi": ["Modem dan gateway", "NIC dan access point", "Hub dan repeater", "Switch dan bridge", "Router dan firewall"], "kunci": 2, "pembahasan": "Hub dan repeater hanya meneruskan serta menguatkan sinyal tanpa membaca alamat apa pun, jadi keduanya perangkat layer 1.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 27, "soal": "Fungsi media converter dalam instalasi jaringan komputer adalah ...", "opsi": ["Mengubah alamat IP privat menjadi alamat IP publik", "Mengubah frame data menjadi paket data berbasis IP", "Mengubah sinyal wireless menjadi sinyal kabel tembaga", "Mengubah media kabel tembaga menjadi media serat optik", "Mengubah sinyal digital komputer menjadi sinyal analog"], "kunci": 3, "pembahasan": "Media converter menjembatani dua media berbeda, umumnya UTP (tembaga) dengan fiber optik, agar dapat saling terhubung.", "topik": "Perangkat Jaringan", "tipe": "PG Biasa"}, {"no": 28, "soal": "Laboratorium dengan 30 komputer masih memakai hub. Saat semua siswa praktik bersama, transfer file menjadi sangat lambat dan sering gagal. Solusi paling tepat adalah ...", "opsi": ["Mengganti hub dengan switch agar tabrakan data ikut berkurang", "Menambah jumlah hub baru agar port yang tersedia lebih banyak", "Mengganti seluruh kabel straight menjadi kabel cross antar PC", "Menaikkan kecepatan internet dari ISP menjadi dua kali lipat", "Memasang repeater di tengah ruangan agar sinyal semakin kuat"], "kunci": 0, "pembahasan": "Hub membuat semua komputer berada dalam satu collision domain. Switch memberi collision domain terpisah tiap port sehingga tabrakan data hilang.", "topik": "Perangkat Jaringan", "tipe": "PG HOTs"}, {"no": 29, "soal": "Sekolah memiliki jaringan guru 192.168.10.0/24 dan jaringan siswa 192.168.20.0/24. Keduanya harus tetap terpisah namun bisa mengakses satu server yang sama. Perangkat yang wajib ada adalah ...", "opsi": ["Hub, karena mampu meneruskan data ke seluruh port sekaligus", "Repeater, karena mampu memperkuat sinyal antar kedua gedung", "Bridge, karena mampu menyatukan dua segmen menjadi satu IP", "Modem, karena mampu mengubah sinyal antar dua jaringan lokal", "Router, karena mampu meneruskan data antar network berbeda"], "kunci": 4, "pembahasan": "Dua network berbeda hanya bisa saling berkomunikasi lewat routing, dan perangkat yang melakukan routing adalah router.", "topik": "Perangkat Jaringan", "tipe": "PG HOTs"}, {"no": 30, "soal": "Access point terpasang di lantai satu. Di ujung lantai dua sinyal sangat lemah, sementara penarikan kabel baru tidak memungkinkan. Solusi paling tepat adalah ...", "opsi": ["Mengganti kabel UTP Cat5e dengan Cat6 supaya sinyal lebih kuat", "Memasang repeater wireless untuk memperluas jangkauan sinyal", "Mengganti access point dengan switch manageable 24 port baru", "Menambah router baru dan menyambungkannya dengan kabel cross", "Memasang media converter agar sinyal dapat melewati lantai dua"], "kunci": 1, "pembahasan": "Tanpa penarikan kabel baru, repeater wireless (extender) menangkap sinyal AP lalu memancarkannya ulang sehingga jangkauan bertambah.", "topik": "Perangkat Jaringan", "tipe": "PG HOTs"}, {"no": 31, "soal": "Ruang server akan dihubungkan ke gedung workshop yang berjarak 250 meter. Koneksi harus stabil dan tahan terhadap gangguan listrik. Solusi paling tepat adalah ...", "opsi": ["Memakai kabel fiber optik dengan bantuan dua media converter", "Memakai kabel UTP Cat6 sepanjang 250 meter secara langsung", "Memakai kabel UTP cross agar sinyal menjangkau lebih jauh", "Memakai kabel coaxial karena lebih tahan terhadap gangguan", "Memakai dua buah hub yang dipasang pada kedua ujung kabel"], "kunci": 0, "pembahasan": "UTP hanya kuat sampai 100 meter dan rentan interferensi listrik. Fiber optik tahan gangguan dan berjarak jauh, dihubungkan ke perangkat UTP lewat media converter.", "topik": "Perangkat Jaringan", "tipe": "PG HOTs"}, {"no": 32, "soal": "Sekolah ingin memisahkan lalu lintas guru dan siswa dalam satu ruang lab berisi 20 komputer, tanpa menambah kabel maupun perangkat lain. Perangkat yang paling tepat dipilih adalah ...", "opsi": ["Switch unmanageable 24 port karena harganya jauh lebih murah", "Dua unit hub 16 port karena dapat memisahkan jalur data siswa", "Satu unit repeater karena mampu membagi jaringan menjadi dua", "Access point tambahan karena dapat memisahkan pengguna wifi", "Switch manageable 24 port karena mendukung konfigurasi VLAN"], "kunci": 4, "pembahasan": "Pemisahan lalu lintas dalam satu switch fisik dilakukan dengan VLAN, dan VLAN hanya bisa dikonfigurasi pada switch manageable.", "topik": "Perangkat Jaringan", "tipe": "PG HOTs"}, {"no": 33, "soal": "Kepanjangan dari singkatan UTP pada kabel jaringan adalah ...", "opsi": ["Unified Transmission Pair", "Unshielded Terminal Port", "Universal Terminal Pairs", "Unshielded Twisted Pair", "Universal Twisted Protocol"], "kunci": 3, "pembahasan": "UTP adalah Unshielded Twisted Pair, yaitu kabel berpasangan yang dipilin tanpa lapisan pelindung logam.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 34, "soal": "Di dalam sebuah kabel UTP standar terdapat kawat kecil sebanyak ...", "opsi": ["3 pasang atau 6 buah kawat kecil", "4 pasang atau 8 buah kawat kecil", "2 pasang atau 4 buah kawat kecil", "6 pasang atau 12 buah kawat kecil", "8 pasang atau 16 buah kawat kecil"], "kunci": 1, "pembahasan": "Kabel UTP berisi 4 pasang kawat yang dipilin, jadi totalnya 8 kawat dengan 8 warna berbeda.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 35, "soal": "Konektor yang dipasang pada ujung kabel UTP untuk jaringan komputer adalah ...", "opsi": ["SC dengan 1 inti serat kaca", "ST dengan 1 inti serat kaca", "RJ-45 dengan 8 pin tembaga", "RJ-11 dengan 6 pin tembaga", "BNC dengan 1 pin tembaga"], "kunci": 2, "pembahasan": "Kabel UTP jaringan memakai konektor RJ-45 yang memiliki 8 pin, sesuai jumlah kawat di dalam kabel.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 36, "soal": "Urutan warna kabel dari pin 1 sampai pin 8 sesuai standar T568B adalah ...", "opsi": ["Putih-oranye, oranye, putih-biru, hijau, putih-hijau, biru, putih-cokelat, cokelat", "Putih-hijau, hijau, putih-biru, oranye, putih-oranye, biru, putih-cokelat, cokelat", "Putih-biru, biru, putih-oranye, hijau, putih-hijau, oranye, putih-cokelat, cokelat", "Putih-oranye, oranye, putih-hijau, biru, putih-biru, hijau, putih-cokelat, cokelat", "Putih-hijau, hijau, putih-oranye, biru, putih-biru, oranye, putih-cokelat, cokelat"], "kunci": 3, "pembahasan": "Standar T568B dimulai dari putih-oranye dan oranye, lalu putih-hijau, biru, putih-biru, hijau, ditutup putih-cokelat dan cokelat.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 37, "soal": "Urutan warna kabel pada pin 1 sampai pin 4 sesuai standar T568A adalah ...", "opsi": ["Putih-hijau, hijau, putih-biru, oranye", "Putih-oranye, oranye, putih-biru, hijau", "Putih-hijau, hijau, putih-oranye, biru", "Putih-oranye, oranye, putih-hijau, biru", "Putih-biru, biru, putih-hijau, oranye"], "kunci": 2, "pembahasan": "T568A adalah kebalikan posisi hijau dan oranye dari T568B, sehingga dimulai dari putih-hijau, hijau, putih-oranye, lalu biru.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 38, "soal": "Kabel UTP disebut kabel straight apabila ...", "opsi": ["Semua pin disusun terbalik mulai dari pin 8 menuju ke pin 1", "Kedua ujungnya memakai susunan warna yang sama persis", "Kedua ujungnya memakai susunan warna yang berbeda total", "Ujung pertama memakai T568A dan ujung kedua memakai T568B", "Pin 1 dengan 3 serta pin 2 dengan 6 saling ditukar posisinya"], "kunci": 1, "pembahasan": "Kabel straight memakai standar yang sama di kedua ujung, misalnya T568B pada ujung kiri dan T568B juga pada ujung kanan.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 39, "soal": "Pada pembuatan kabel cross, pasangan pin yang posisinya saling ditukar adalah ...", "opsi": ["Pin 1 dengan pin 2 dan pin 3 dengan pin 4", "Pin 4 dengan pin 5 dan pin 7 dengan pin 8", "Pin 1 dengan pin 8 dan pin 2 dengan pin 7", "Pin 3 dengan pin 4 dan pin 5 dengan pin 6", "Pin 1 dengan pin 3 dan pin 2 dengan pin 6"], "kunci": 4, "pembahasan": "Pin 1 dan 2 adalah jalur pengirim (TX), sedangkan pin 3 dan 6 jalur penerima (RX). Pada kabel cross keduanya ditukar agar TX bertemu RX.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 40, "soal": "Kelompok sambungan perangkat berikut yang seluruhnya memakai kabel straight adalah ...", "opsi": ["PC ke switch, switch ke router, dan PC ke hub jaringan", "PC ke PC, switch ke switch, dan router ke router utama", "Switch ke switch, hub ke hub, dan PC ke router jaringan", "Router ke router, PC ke PC, dan hub ke switch jaringan", "PC ke router, PC ke PC lain, dan switch ke hub jaringan"], "kunci": 0, "pembahasan": "Kabel straight dipakai untuk menghubungkan perangkat yang berbeda jenis, seperti PC ke switch, PC ke hub, dan switch ke router.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 41, "soal": "Kelompok sambungan perangkat berikut yang seluruhnya memakai kabel cross adalah ...", "opsi": ["PC ke hub, router ke switch, dan hub ke router jaringan", "PC ke PC, switch ke switch, dan router ke router utama", "PC ke switch, PC ke hub, dan switch ke router jaringan", "Router ke switch, PC ke hub, dan PC ke switch jaringan", "Switch ke router, hub ke PC, dan switch ke PC jaringan"], "kunci": 1, "pembahasan": "Kabel cross dipakai antar perangkat sejenis, misalnya PC ke PC, switch ke switch, dan router ke router.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 42, "soal": "Alat yang digunakan untuk menjepit konektor RJ-45 pada ujung kabel UTP adalah ...", "opsi": ["Tang crimping khusus konektor RJ-45", "Tang potong biasa dan obeng plus kecil", "LAN tester dengan dua buah lampu LED", "Solder listrik dengan timah secukupnya", "Cutter kecil dan lakban isolasi hitam"], "kunci": 0, "pembahasan": "Tang crimping menekan pin tembaga konektor RJ-45 agar menembus isolasi kawat sehingga tersambung permanen.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 43, "soal": "Alat yang dipakai untuk memastikan susunan kawat pada kabel UTP sudah tersambung benar adalah ...", "opsi": ["Tang crimping dengan gagang berwarna biru", "Multimeter digital dengan layar angka kecil", "Obeng tester dengan lampu neon di dalamnya", "Cable stripper dengan pisau pengupas kecil", "LAN tester dengan delapan lampu indikator"], "kunci": 4, "pembahasan": "LAN tester menyalakan lampu 1 sampai 8 secara berurutan di kedua sisi. Jika ada lampu yang mati, kawat pada pin tersebut bermasalah.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 44, "soal": "Panjang maksimal satu segmen kabel UTP agar sinyal tidak melemah adalah ...", "opsi": ["50 meter untuk satu segmen kabel", "10 meter untuk satu segmen kabel", "100 meter untuk satu segmen kabel", "500 meter untuk satu segmen kabel", "250 meter untuk satu segmen kabel"], "kunci": 2, "pembahasan": "Standar Ethernet membatasi kabel UTP maksimal 100 meter per segmen. Lebih dari itu sinyal melemah dan koneksi tidak stabil.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 45, "soal": "Alasan kawat di dalam kabel UTP dibuat saling berpilin (twisted) adalah ...", "opsi": ["Mempermudah pemasangan konektor pada kedua ujung kabel", "Menghemat bahan tembaga sehingga harganya menjadi murah", "Membuat kabel menjadi lebih kaku sehingga tidak mudah putus", "Mengurangi gangguan interferensi dan crosstalk antar kawat", "Menambah kecepatan transfer data hingga dua kali lipatnya"], "kunci": 3, "pembahasan": "Pilinan membuat medan magnet antar kawat saling meniadakan, sehingga gangguan dari luar dan crosstalk antar pasangan berkurang.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG Biasa"}, {"no": 46, "soal": "Dua siswa menyambungkan dua laptop secara langsung tanpa switch untuk transfer file. Kabel yang dipakai jenis straight dan sudah teruji baik, tetapi koneksi tetap tidak terbentuk. Penyebab paling tepat adalah ...", "opsi": ["Alamat IP kedua laptop harus berada di network berbeda", "Konektor RJ-45 yang dipakai seharusnya diganti ke RJ-11", "Kabel UTP harus diganti dengan kabel fiber optik singlemode", "Kedua laptop wajib dihubungkan melalui repeater tambahan", "Kabel yang dipakai seharusnya jenis cross bukan straight"], "kunci": 4, "pembahasan": "Laptop ke laptop adalah perangkat sejenis, sehingga jalur TX dan RX harus ditukar. Kabel yang benar adalah cross, bukan straight.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG HOTs"}, {"no": 47, "soal": "Sebuah kabel dibuat dengan ujung pertama memakai standar T568A dan ujung kedua memakai standar T568B. Jenis kabel serta penggunaannya yang tepat adalah ...", "opsi": ["Kabel straight, dipakai menghubungkan PC dengan PC lainnya", "Kabel cross, dipakai menghubungkan switch dengan switch lain", "Kabel straight, dipakai menghubungkan PC dengan port switch", "Kabel rollover, dipakai untuk konfigurasi console pada router", "Kabel cross, dipakai menghubungkan PC dengan port switch baru"], "kunci": 1, "pembahasan": "Ujung berbeda standar (A dan B) menghasilkan kabel cross, yang dipakai untuk menghubungkan perangkat sejenis seperti switch ke switch.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG HOTs"}, {"no": 48, "soal": "Hasil uji LAN tester menunjukkan lampu 1 sampai 8 menyala berurutan di kedua sisi, kecuali lampu nomor 3 yang tidak menyala sama sekali. Tindakan perbaikan paling tepat adalah ...", "opsi": ["Mengubah susunan kabel straight menjadi susunan kabel cross", "Menambah repeater di tengah kabel agar sinyal pin 3 menguat", "Memotong ujung kabel lalu memasang ulang konektor RJ-45", "Mengganti seluruh kabel UTP dengan kategori yang lebih tinggi", "Mengganti switch karena port yang dipakai sudah rusak total"], "kunci": 2, "pembahasan": "Lampu mati pada satu pin menandakan kawat di pin tersebut tidak menyentuh pin konektor. Perbaikannya cukup potong ujung dan crimping ulang.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG HOTs"}, {"no": 49, "soal": "Kabel UTP straight sepanjang 120 meter dipasang dari ruang guru ke laboratorium. Susunan warna sudah benar, namun koneksi sering putus dan lambat. Analisis serta solusi yang tepat adalah ...", "opsi": ["Panjang melebihi 100 meter, perlu switch atau repeater di tengah", "Kabel salah jenis, seharusnya memakai kabel cross antar ruangan", "Konektor RJ-45 terbalik, perlu diganti dengan konektor tipe RJ-11", "Kategori kabel terlalu tinggi, perlu diturunkan menjadi Cat5 biasa", "Susunan warna salah, perlu diubah dari T568B menjadi T568A saja"], "kunci": 0, "pembahasan": "Batas aman UTP adalah 100 meter. Pada 120 meter sinyal sudah melemah, sehingga perlu perangkat penguat seperti switch atau repeater di tengah jalur.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG HOTs"}, {"no": 50, "soal": "Sekolah memasang jaringan lab baru dengan target kecepatan 1 Gbps, jarak terjauh 80 meter, dan anggaran terbatas. Pilihan media yang paling tepat adalah ...", "opsi": ["Kabel UTP Cat6a karena mampu mencapai 10 Gbps di jarak 100 meter", "Kabel fiber optik karena kecepatannya paling tinggi serta stabil", "Kabel coaxial karena tahan terhadap gangguan sinyal dari luar", "Kabel UTP Cat5e karena sudah mendukung 1 Gbps sampai 100 meter", "Kabel UTP Cat5 karena harganya paling murah dan mudah didapat"], "kunci": 3, "pembahasan": "Cat5e sudah memenuhi 1 Gbps hingga 100 meter dengan harga paling ekonomis. Cat6a dan fiber terlalu berlebihan, sedangkan Cat5 hanya 100 Mbps.", "topik": "Kabel UTP Straight dan Cross", "tipe": "PG HOTs"}];
+const HURUF = ["A","B","C","D","E"];
+const DURASI = 90 * 60;      // 90 menit
+const KKM = 75;
+
+let soal = [], jawab = [], idx = 0, sisa = DURASI, timerId = null;
+
+const $ = id => document.getElementById(id);
+const acak = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+function siapkanSoal(diacak) {
+  let data = BANK.map(s => ({ ...s }));
+  if (diacak) {
+    data = acak(data).map(s => {
+      const pasangan = acak(s.opsi.map((o, i) => ({ o, i })));
+      return { ...s, opsi: pasangan.map(p => p.o), kunci: pasangan.findIndex(p => p.i === s.kunci) };
+    });
+  }
+  soal = data;
+  jawab = new Array(soal.length).fill(null);
+}
+
+function mulai() {
+  const nama = $("in-nama").value.trim(), kelas = $("in-kelas").value.trim();
+  if (!nama || !kelas) { $("login-err").textContent = "Nama dan kelas wajib diisi dulu ya."; $("login-err").classList.remove("hidden"); return; }
+  siapkanSoal($("in-acak").checked);
+  $("hd-nama").textContent = nama + " · " + kelas;
+  $("hs-nama").textContent = nama + " — " + kelas;
+  $("scr-login").classList.add("hidden");
+  $("scr-ujian").classList.remove("hidden");
+  idx = 0; sisa = DURASI;
+  render(); buatGrid(); jalankanTimer();
+  window.scrollTo(0, 0);
+}
+
+function jalankanTimer() {
+  clearInterval(timerId);
+  tickTimer();
+  timerId = setInterval(tickTimer, 1000);
+}
+function tickTimer() {
+  const m = String(Math.floor(sisa / 60)).padStart(2, "0"), d = String(sisa % 60).padStart(2, "0");
+  const el = $("hd-timer");
+  el.textContent = m + ":" + d;
+  el.className = "font-mono font-bold text-lg rounded-lg px-3 py-1.5 tabular-nums " +
+    (sisa <= 300 ? "bg-red-100 text-red-600 animate-pulse" : "bg-slate-100");
+  if (sisa <= 0) { clearInterval(timerId); kumpulkan(); return; }
+  sisa--;
+}
+
+function render() {
+  const s = soal[idx];
+  $("q-index").textContent = "Soal " + (idx + 1) + " dari " + soal.length;
+  $("q-topik").textContent = s.topik;
+  $("q-teks").textContent = s.soal;
+  $("bar").style.width = (jawab.filter(j => j !== null).length / soal.length * 100) + "%";
+
+  const box = $("q-opsi");
+  box.innerHTML = "";
+  s.opsi.forEach((o, i) => {
+    const b = document.createElement("button");
+    b.className = "opt w-full text-left flex gap-3 items-start border-2 border-slate-200 rounded-xl p-3 hover:border-indigo-300 transition" + (jawab[idx] === i ? " sel" : "");
+    b.innerHTML = '<span class="bul shrink-0 w-7 h-7 rounded-lg border-2 border-slate-300 grid place-items-center text-xs font-bold">' + HURUF[i] + '</span>' +
+                  '<span class="text-sm sm:text-[15px] leading-relaxed pt-0.5"></span>';
+    b.querySelector("span:last-child").textContent = o;
+    b.onclick = () => { jawab[idx] = i; render(); buatGrid(); };
+    box.appendChild(b);
+  });
+
+  $("btn-prev").disabled = idx === 0;
+  $("btn-next").textContent = idx === soal.length - 1 ? "Soal Terakhir" : "Selanjutnya";
+}
+
+function buatGrid() {
+  const g = $("grid-nomor");
+  g.innerHTML = "";
+  soal.forEach((_, i) => {
+    const b = document.createElement("button");
+    b.textContent = i + 1;
+    b.className = "aspect-square rounded-lg text-sm font-semibold " +
+      (jawab[i] !== null ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-600") +
+      (i === idx ? " ring-2 ring-offset-1 ring-indigo-400" : "");
+    b.onclick = () => { idx = i; $("panel").classList.add("hidden"); render(); buatGrid(); window.scrollTo(0, 0); };
+    g.appendChild(b);
+  });
+}
+
+function kumpulkan() {
+  clearInterval(timerId);
+  $("modal").classList.add("hidden");
+  $("panel").classList.add("hidden");
+  const benar = jawab.filter((j, i) => j === soal[i].kunci).length;
+  const kosong = jawab.filter(j => j === null).length;
+  const salah = soal.length - benar - kosong;
+  const nilai = Math.round(benar / soal.length * 100);
+
+  $("hs-nilai").textContent = nilai;
+  $("hs-benar").textContent = benar;
+  $("hs-salah").textContent = salah;
+  $("hs-kosong").textContent = kosong;
+  const st = $("hs-status");
+  if (nilai >= KKM) { st.textContent = "TUNTAS — di atas KKM " + KKM; st.className = "inline-block text-sm font-semibold rounded-full px-4 py-1.5 bg-emerald-100 text-emerald-700"; }
+  else { st.textContent = "BELUM TUNTAS — KKM " + KKM; st.className = "inline-block text-sm font-semibold rounded-full px-4 py-1.5 bg-amber-100 text-amber-700"; }
+
+  // rekap per materi
+  const topik = {};
+  soal.forEach((s, i) => {
+    topik[s.topik] = topik[s.topik] || { b: 0, n: 0 };
+    topik[s.topik].n++;
+    if (jawab[i] === s.kunci) topik[s.topik].b++;
+  });
+  $("hs-rekap").innerHTML = Object.entries(topik).map(([t, v]) => {
+    const p = Math.round(v.b / v.n * 100);
+    return '<div><div class="flex justify-between text-xs mb-1"><span>' + t + '</span><span class="font-semibold">' + v.b + '/' + v.n + '</span></div>' +
+           '<div class="h-2 bg-slate-200 rounded-full overflow-hidden"><div class="h-2 bg-indigo-500" style="width:' + p + '%"></div></div></div>';
+  }).join("");
+
+  // review
+  $("review").innerHTML = soal.map((s, i) => {
+    const ok = jawab[i] === s.kunci;
+    const jw = jawab[i] === null ? "<em>tidak dijawab</em>" : HURUF[jawab[i]] + ". " + esc(s.opsi[jawab[i]]);
+    return '<div class="bg-white rounded-xl p-4 shadow-sm border-l-4 ' + (ok ? "border-emerald-500" : "border-red-400") + '">' +
+      '<div class="flex justify-between gap-3 mb-2"><span class="text-xs font-bold text-slate-400">SOAL ' + (i + 1) + '</span>' +
+      '<span class="text-[11px] font-semibold rounded-full px-2 py-0.5 ' + (ok ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-600") + '">' + (ok ? "Benar" : "Salah") + '</span></div>' +
+      '<p class="text-sm leading-relaxed">' + esc(s.soal) + '</p>' +
+      '<p class="text-sm mt-2"><span class="text-slate-500">Jawabanmu:</span> ' + jw + '</p>' +
+      '<p class="text-sm text-emerald-700"><span class="text-slate-500">Kunci:</span> ' + HURUF[s.kunci] + '. ' + esc(s.opsi[s.kunci]) + '</p>' +
+      '<p class="text-xs text-slate-600 bg-slate-50 rounded-lg p-2.5 mt-2 leading-relaxed">' + esc(s.pembahasan) + '</p></div>';
+  }).join("");
+
+  $("scr-ujian").classList.add("hidden");
+  $("scr-hasil").classList.remove("hidden");
+  window.scrollTo(0, 0);
+}
+
+function esc(t) { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; }
+
+// ---- event ----
+$("btn-mulai").onclick = mulai;
+$("in-kelas").addEventListener("keydown", e => { if (e.key === "Enter") mulai(); });
+$("btn-prev").onclick = () => { if (idx > 0) { idx--; render(); buatGrid(); window.scrollTo(0, 0); } };
+$("btn-next").onclick = () => { if (idx < soal.length - 1) { idx++; render(); buatGrid(); window.scrollTo(0, 0); } };
+$("btn-nav").onclick = () => $("panel").classList.remove("hidden");
+$("btn-tutup").onclick = () => $("panel").classList.add("hidden");
+$("panel").onclick = e => { if (e.target === $("panel")) $("panel").classList.add("hidden"); };
+$("btn-selesai").onclick = () => {
+  const kosong = jawab.filter(j => j === null).length;
+  $("modal-teks").textContent = kosong ? "Masih ada " + kosong + " soal yang belum dijawab. Yakin dikumpulkan sekarang?" : "Semua soal sudah dijawab. Jawaban tidak bisa diubah setelah dikumpulkan.";
+  $("modal").classList.remove("hidden");
+};
+$("modal-batal").onclick = () => $("modal").classList.add("hidden");
+$("modal-ok").onclick = kumpulkan;
+$("btn-review").onclick = () => {
+  const r = $("review");
+  r.classList.toggle("hidden");
+  $("btn-review").textContent = r.classList.contains("hidden") ? "Lihat Pembahasan" : "Sembunyikan Pembahasan";
+};
+$("btn-ulang").onclick = () => location.reload();
+</script>
+</body>
+</html>
