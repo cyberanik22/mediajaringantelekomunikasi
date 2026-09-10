@@ -1,185 +1,1402 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="../../assets/img/logoKaryaGuna.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="../../assets/css/main.css" />
-    <link rel="stylesheet" href="./assets/css/style.css" />
-    <title>Profil Kepala Sekolah | SMK Karya Guna Jakarta</title>
-  </head>
-  <body>
-    <!-- Back to Top Button -->
-    <div class="backToTop">
-      <span class="topButton">^</span>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CBT Online - UTS Jaringan Komputer Dasar</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .question-number-btn {
+            width: 42px;
+            height: 42px;
+            margin: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .question-number-btn.answered {
+            background-color: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+        }
+
+        .question-number-btn.doubtful {
+            background-color: #ffc107;
+            color: #000;
+            border-color: #ffc107;
+        }
+
+        .question-number-btn.active-q {
+            border: 3px solid #000 !important;
+            font-weight: bold;
+            transform: scale(1.05);
+        }
+
+        .option-container {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-container:hover {
+            background-color: #f8f9fa;
+            border-color: #cbd5e1;
+        }
+
+        .option-container.selected {
+            background-color: #e7f1ff;
+            border-color: #0d6efd;
+        }
+
+        .option-prefix {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .option-container.selected .option-prefix {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .timer-badge {
+            font-size: 1.1rem;
+            font-weight: 700;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .badge-hots {
+            background-color: #dc3545;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .review-card {
+            border-left: 5px solid #ccc;
+        }
+        .review-card.correct {
+            border-left-color: #198754;
+        }
+        .review-card.incorrect {
+            border-left-color: #dc3545;
+        }
+
+        .sticky-sidebar {
+            position: sticky;
+            top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+                <i class="fa-solid fa-laptop-code fs-4"></i>
+                <span>CBT SYSTEM - UTS JARKOM</span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-white text-primary rounded-3 px-3 py-1 fw-bold shadow-sm d-none d-md-block" id="studentDisplay">
+                    <i class="fa-solid fa-user-graduate me-1"></i> <span id="displayName">Siswa CBT</span>
+                </div>
+                <div class="bg-danger text-white timer-badge d-flex align-items-center gap-2 shadow-sm" id="timerContainer">
+                    <i class="fa-regular fa-clock"></i>
+                    <span id="timer">90:00</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid p-4">
+        
+        <!-- LOGIN / START FORM -->
+        <div id="startScreen" class="row justify-content-center my-5">
+            <div class="col-md-6 col-lg-5">
+                <div class="card p-4 shadow-lg text-center">
+                    <div class="mb-3 text-primary">
+                        <i class="fa-solid fa-file-signature fa-4x"></i>
+                    </div>
+                    <h3 class="fw-bold mb-1">Ujian Tengah Semester</h3>
+                    <p class="text-muted mb-4">Mata Pelajaran: Dasar-Dasar Jaringan Komputer</p>
+                    <hr>
+                    <form id="identityForm" onsubmit="startExam(event)">
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-semibold">Nama Lengkap Siswa</label>
+                            <input type="text" id="studentName" class="form-control form-control-lg" placeholder="Masukkan nama Anda..." required>
+                        </div>
+                        <div class="mb-3 text-start">
+                            <label class="form-label fw-semibold">Kelas / NISN</label>
+                            <input type="text" id="studentClass" class="form-control" placeholder="Contoh: X TKJ 1 / 12345" required>
+                        </div>
+                        <div class="alert alert-info text-start small mb-4">
+                            <h6><i class="fa-solid fa-circle-info me-1"></i> Ketentuan Ujian:</h6>
+                            <ul class="mb-0 ps-3">
+                                <li>Jumlah Soal: <b>50 Soal Pilihan Ganda (A, B, C, D, E)</b></li>
+                                <li>Waktu Pengerjaan: <b>90 Menit</b></li>
+                                <li>Materi: Kabel UTP, OSI Layer, Perangkat Jaringan & Wireless</li>
+                                <li>Termasuk soal analisis tingkat tinggi (HOTS).</li>
+                            </ul>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">
+                            <i class="fa-solid fa-play me-2"></i>Mulai Ujian Sekarang
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXAM INTERFACE -->
+        <div id="examScreen" class="row d-none">
+            <!-- Left Side: Question Area -->
+            <div class="col-lg-8 mb-4">
+                <div class="card p-4 min-vh-50 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+                        <span class="fs-5 fw-bold text-primary">Soal No. <span id="currentQNum">1</span></span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span id="hotsBadge" class="badge-hots d-none"><i class="fa-solid fa-brain me-1"></i> Soal HOTS</span>
+                            <span class="badge bg-secondary text-white" id="categoryBadge">Kabel UTP</span>
+                        </div>
+                    </div>
+
+                    <!-- Question Text -->
+                    <div class="mb-4 fs-6 lh-base" id="questionText">
+                        Memuat pertanyaan...
+                    </div>
+
+                    <!-- Options (A-E) -->
+                    <div id="optionsContainer" class="mb-4">
+                        <!-- Rendered via JS -->
+                    </div>
+
+                    <!-- Navigation Controls -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <button class="btn btn-outline-secondary px-4 fw-semibold" id="prevBtn" onclick="navigateQuestion(-1)">
+                            <i class="fa-solid fa-arrow-left me-2"></i>Sebelumnya
+                        </button>
+                        
+                        <div class="form-check form-switch bg-light p-2 px-3 rounded border">
+                            <input class="form-check-input ms-0 me-2" type="checkbox" id="doubtfulCheck" onchange="toggleDoubtful()">
+                            <label class="form-check-label fw-semibold text-warning-emphasis" for="doubtfulCheck">
+                                <i class="fa-solid fa-flag me-1"></i> Ragu-Ragu
+                            </label>
+                        </div>
+
+                        <button class="btn btn-primary px-4 fw-semibold" id="nextBtn" onclick="navigateQuestion(1)">
+                            Berikutnya <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Navigation Grid Sidebar -->
+            <div class="col-lg-4">
+                <div class="card p-3 shadow-sm sticky-sidebar">
+                    <h6 class="fw-bold mb-3 border-bottom pb-2"><i class="fa-solid fa-grip me-2"></i>Navigasi Nomor Soal</h6>
+                    
+                    <div class="d-flex flex-wrap justify-content-start mb-3" id="questionGrid" style="max-height: 380px; overflow-y: auto;">
+                        <!-- 50 Buttons generated via JS -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="border-top pt-3 mt-2 small">
+                        <div class="row g-2">
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <span class="badge bg-primary px-2 py-1">&nbsp;</span> Sudah Dijawab
+                            </div>
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <span class="badge bg-light text-dark border px-2 py-1">&nbsp;</span> Belum Dijawab
+                            </div>
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <span class="badge bg-warning px-2 py-1">&nbsp;</span> Ragu-Ragu
+                            </div>
+                            <div class="col-6 d-flex align-items-center gap-2">
+                                <span class="badge bg-white border border-dark px-2 py-1">&nbsp;</span> Sedang Aktif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button class="btn btn-success w-100 fw-bold py-2 shadow-sm" onclick="confirmSubmit()">
+                            <i class="fa-solid fa-check-double me-2"></i>Selesaikan Ujian
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RESULT & REVIEW SCREEN -->
+        <div id="resultScreen" class="row justify-content-center d-none">
+            <div class="col-lg-10">
+                <!-- Score Summary Card -->
+                <div class="card p-4 shadow-lg mb-4 text-center border-0 bg-white">
+                    <div class="py-3">
+                        <i class="fa-solid fa-award fa-4x text-warning mb-3"></i>
+                        <h2 class="fw-bold">Hasil Ujian Tengah Semester (UTS)</h2>
+                        <p class="text-muted" id="resultStudentInfo">Siswa: - | Kelas: -</p>
+                    </div>
+
+                    <div class="row justify-content-center my-3">
+                        <div class="col-md-4">
+                            <div class="p-4 rounded-4 bg-light border">
+                                <div class="text-muted small uppercase fw-bold mb-1">NILAI AKHIR</div>
+                                <div class="display-3 fw-bold text-primary" id="finalScore">0</div>
+                                <div class="mt-2" id="gradeBadge"><span class="badge bg-success fs-6">Sangat Baik</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 justify-content-center my-2">
+                        <div class="col-6 col-sm-3">
+                            <div class="p-3 border rounded-3 bg-success-subtle text-success border-success-subtle">
+                                <i class="fa-solid fa-circle-check fs-4 mb-1"></i>
+                                <div class="fs-4 fw-bold" id="correctCount">0</div>
+                                <div class="small">Jawaban Benar</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-3">
+                            <div class="p-3 border rounded-3 bg-danger-subtle text-danger border-danger-subtle">
+                                <i class="fa-solid fa-circle-xmark fs-4 mb-1"></i>
+                                <div class="fs-4 fw-bold" id="incorrectCount">0</div>
+                                <div class="small">Jawaban Salah</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-3">
+                            <div class="p-3 border rounded-3 bg-secondary-subtle text-secondary border-secondary-subtle">
+                                <i class="fa-solid fa-minus-circle fs-4 mb-1"></i>
+                                <div class="fs-4 fw-bold" id="unansweredCount">0</div>
+                                <div class="small">Tidak Dijawab</div>
+                            </div>
+                        </div>
+                        <div class="col-6 col-sm-3">
+                            <div class="p-3 border rounded-3 bg-info-subtle text-info border-info-subtle">
+                                <i class="fa-solid fa-clock fs-4 mb-1"></i>
+                                <div class="fs-4 fw-bold" id="timeSpent">0m</div>
+                                <div class="small">Waktu Digunakan</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 d-flex justify-content-center gap-3">
+                        <button class="btn btn-outline-primary px-4 fw-bold" onclick="window.print()">
+                            <i class="fa-solid fa-print me-2"></i>Cetak Hasil
+                        </button>
+                        <button class="btn btn-primary px-4 fw-bold" onclick="toggleReview()">
+                            <i class="fa-solid fa-list-check me-2"></i>Lihat Pembahasan Soal
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Detailed Question Review List -->
+                <div id="reviewContainer" class="d-none">
+                    <h4 class="fw-bold mb-3 text-secondary"><i class="fa-solid fa-book-open me-2"></i>Pembahasan & Kunci Jawaban</h4>
+                    <div id="reviewList">
+                        <!-- Generated via JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-    <!-- Header Section -->
-    <header>
-      <div class="hamburger">
-        <div class="stripe firstStripe"></div>
-        <div class="stripe midStripe"></div>
-        <div class="stripe lastStripe"></div>
-      </div>
-      <nav>
-        <div class="logo">
-          <a href="../../" class="logoLink">
-            <img
-              src="../../assets/img/logoKaryaGuna.png"
-              alt="Logo SMK Karya Guna"
-            />
-            <h1>SMK Karya Guna Jakarta</h1>
-          </a>
-        </div>
-        <div class="navLink">
-          <ul class="bigUl">
-            <li><a class="homeLink" href="../../">Beranda</a></li>
-            <li class="aboutLink">
-              <a class="clickAbout"
-                >Tentang Sekolah<img
-                  src="../../assets/img/green-triangle.png"
-                  alt="Arrow Down"
-              /></a>
-              <ul class="aboutUl">
-                <li><a href="../sejarah-sekolah/">Sejarah</a></li>
-                <li><a href="../visi-misi/">Visi & Misi</a></li>
-                <li>
-                  <a href="../struktur-organisasi/">Struktur Organisasi</a>
-                </li>
-                <li>
-                  <a href="#">Profil Kepala Sekolah</a>
-                </li>
-                <li>
-                  <a href="../sarana-dan-fasilitas/">Sarana & Fasilitas</a>
-                </li>
-              </ul>
-            </li>
-            <li class="informationLink">
-              <a class="clickInformation"
-                >Informasi<img
-                  src="../../assets/img/green-triangle.png"
-                  alt="Arrow Down"
-              /></a>
-              <ul class="informationUl">
-                <li>
-                  <a href="../../informasi/kalender-pendidikan/"
-                    >Kalender Pendidikan</a
-                  >
-                </li>
-                <li>
-                  <a href="../../informasi/ekstrakulikuler/">Ekstrakulikuler</a>
-                </li>
-              </ul>
-            </li>
-            <li class="ppdbLink"><a href="../../ppdb/">PPDB</a></li>
-            <li class="contactLink">
-              <a href="../../#contact-section">Kontak</a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </header>
 
-    <!-- Main Section -->
-    <main>
-      <!-- Hero Section -->
-      <section class="heroSection">
-        <div class="firstHero">
-          <h1>Profil Kepala Sekolah</h1>
+    <!-- Bootstrap Modal for Finish Confirmation -->
+    <div class="modal fade" id="submitModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-circle-question me-2"></i>Konfirmasi Selesai Ujian</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center py-4">
+                    <i class="fa-solid fa-triangle-exclamation text-warning fa-3x mb-3"></i>
+                    <h5>Apakah Anda yakin ingin mengakhiri ujian ini?</h5>
+                    <p class="text-muted mb-0" id="modalStatusText">Anda telah menjawab X dari 50 soal.</p>
+                </div>
+                <div class="modal-footer justify-content-center">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Kembali Pengerjaan</button>
+                    <button type="button" class="btn btn-success px-4 fw-bold" onclick="finishExam()">Ya, Kirim Jawaban</button>
+                </div>
+            </div>
         </div>
-      </section>
+    </div>
 
-      <!-- Profile Section -->
-      <section class="profileSection">
-        <h2>Profil Kepala Sekolah</h2>
-        <div class="isiProfile">
-          <img src="assets/img/profilePicture.jpg" alt="Drs. Mulyono, M.Pd" />
-          <div class="descProfile">
-            <h5>Drs. Mulyono, M.Pd</h5>
-            <p>
-              Assalāmualaykum waraḥmatullāhi wabarakātuh. <br />
-              Puji syukur kepada Allah SWT, Tuhan Yang Maha Esa yang telah
-              memberikan rahmat dan anugerahNya sehingga website SMK KARYA GUNA
-              JAKARTA ini dapat terbit. Salah satu tujuan dari website ini
-              adalah untuk menjawab akan setiap kebutuhan informasi dengan
-              memanfaatkan sarana teknologi informasi yang ada. Kami sadar
-              sepenuhnya dalam rangka memajukan pendidikan di era berkembangnya
-              Teknologi Informasi yang begitu pesat, sangat diperlukan berbagai
-              sarana prasarana yang kondusif, kebutuhan berbagai informasi
-              siswa, guru, orangtua maupun masyarakat, sehingga kami berusaha
-              mewujudkan hal tersebut semaksimal mungkin. Semoga dengan adanya
-              website ini dapat membantu dan bermanfaat, terutama informasi yang
-              berhubungan dengan pendidikan, ilmu pengetahuan dan informasi
-              seputar SMK KARYA GUNA JAKARTA
-            </p>
-          </div>
-        </div>
-      </section>
-    </main>
+    <!-- JS Logic & Questions Data -->
+    <script>
+        const questionsData = [
+            // --- BAB 1: KABEL UTP & MEDIA TRANSMISI (13 SOAL) ---
+            {
+                id: 1,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Urutan warna standar T568B untuk pembuatan kabel UTP Straight-Through pada pin 1 sampai pin 8 adalah...",
+                options: [
+                    "A. Putih Orange, Orange, Putih Hijau, Biru, Putih Biru, Hijau, Putih Cokelat, Cokelat",
+                    "B. Putih Hijau, Hijau, Putih Orange, Biru, Putih Biru, Orange, Putih Cokelat, Cokelat",
+                    "C. Putih Orange, Orange, Putih Hijau, Hijau, Putih Biru, Biru, Putih Cokelat, Cokelat",
+                    "D. Putih Cokelat, Cokelat, Putih Hijau, Biru, Putih Biru, Hijau, Putih Orange, Orange",
+                    "E. Orange, Putih Orange, Hijau, Putih Biru, Biru, Putih Hijau, Cokelat, Putih Cokelat"
+                ],
+                correct: 0,
+                explanation: "Standar T568B dimulai dengan urutan: 1. Putih Orange, 2. Orange, 3. Putih Hijau, 4. Biru, 5. Putih Biru, 6. Hijau, 7. Putih Cokelat, 8. Cokelat."
+            },
+            {
+                id: 2,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Jenis kabel UTP yang digunakan untuk menghubungkan dua buah perangkat yang sejenis, seperti PC ke PC atau Switch ke Switch (tanpa Auto-MDIX) adalah...",
+                options: [
+                    "A. Straight-Through Cable",
+                    "B. Crossover Cable",
+                    "C. Rollover Cable",
+                    "D. Coaxial Cable",
+                    "E. Fiber Optic Cable"
+                ],
+                correct: 1,
+                explanation: "Kabel Crossover digunakan untuk menghubungkan dua perangkat jaringan yang sama (peer-to-peer seperti PC-PC atau Switch-Switch)."
+            },
+            {
+                id: 3,
+                category: "Kabel UTP",
+                hots: true,
+                question: "Seorang teknisi jaringan mengkrimping kabel UTP dengan urutan T568A di Ujung A dan T568B di Ujung B. Ketika diuji dengan LAN Tester, pin yang bertukar posisi adalah pin...",
+                options: [
+                    "A. Pin 1-2 bertukar dengan Pin 4-5",
+                    "B. Pin 1-2 bertukar dengan Pin 3-6",
+                    "C. Pin 3-6 bertukar dengan Pin 7-8",
+                    "D. Pin 4-5 bertukar dengan Pin 7-8",
+                    "E. Semua pin bertukar secara terbalik (1 ke 8)"
+                ],
+                correct: 1,
+                explanation: "Perbedaan antara standar T568A dan T568B terletak pada pasangan kabel data (TX/RX) yaitu transmisi warna Orange (pin 1,2) dan Hijau (pin 3,6) yang saling bertukar."
+            },
+            {
+                id: 4,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Konektor standar yang digunakan pada ujung kabel UTP untuk dihubungkan ke Port Ethernet / NIC adalah...",
+                options: [
+                    "A. RJ-11",
+                    "B. RJ-45",
+                    "C. BNC Connector",
+                    "D. SC Connector",
+                    "E. ST Connector"
+                ],
+                correct: 1,
+                explanation: "Konektor RJ-45 (Registered Jack 45) adalah konektor standar 8 pin yang digunakan untuk kabel UTP pada jaringan komputer."
+            },
+            {
+                id: 5,
+                category: "Kabel UTP",
+                hots: true,
+                question: "Sebuah laboratorium komputer menggunakan kabel UTP Cat5e. Saat dilakukan transfer data antar komputer, kecepatan maksimal hanya mencapai 100 Mbps, padahal kartu jaringan (NIC) sudah Gigabit (1000 Mbps). Setelah diperiksa, ternyata teknisi hanya mengkrimping 4 pin saja (Pin 1, 2, 3, dan 6). Mengapa hal ini terjadi?",
+                options: [
+                    "A. Pin 1, 2, 3, dan 6 rusak sehingga terjadi penurunan kecepatan",
+                    "B. Standar Gigabit Ethernet (1000BASE-T) memerlukan ke-8 pin kabel UTP berfungsi sempurna",
+                    "C. Pin 4 dan 5 khusus digunakan untuk arus listrik PoE (Power over Ethernet)",
+                    "D. Kabel UTP Cat5e tidak mendukung transmisi data di atas 10 Mbps",
+                    "E. Pin 7 dan 8 berfungsi sebagai grounding proteksi petir"
+                ],
+                correct: 1,
+                explanation: "Fast Ethernet (100Mbps) hanya membutuhkan 4 pin (1,2,3,6). Namun, Gigabit Ethernet (1000Mbps / 1Gbps) mewajibkan seluruh 8 pin (4 pasang) terhubung dan berfungsi dengan baik."
+            },
+            {
+                id: 6,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Kategori kabel UTP yang mendukung kecepatan transmisi hingga 10 Gbps pada jarak maksimum 55 meter dan frekuensi 250 MHz adalah...",
+                options: [
+                    "A. Cat3",
+                    "B. Cat5",
+                    "C. Cat5e",
+                    "D. Cat6",
+                    "E. Cat3e"
+                ],
+                correct: 3,
+                explanation: "Kabel Cat6 mendukung kecepatan hingga 10 Gbps untuk jarak pendek (hingga 37-55 meter) dan frekuensi hingga 250 MHz."
+            },
+            {
+                id: 7,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Fungsi utama dari melilitkan (twisting) dua kawat tembaga secara berpasangan pada kabel UTP adalah untuk...",
+                options: [
+                    "A. Menambah kelenturan kabel agar tidak mudah putus",
+                    "B. Mengurangi efek Crosstalk dan Interfensi Elektromagnetik (EMI)",
+                    "C. Meningkatkan tegangan listrik yang mengalir di dalam kabel",
+                    "D. Memudahkan pengelompokan warna saat mengkrimping",
+                    "E. Memperpanjang jarak jangkauan kabel melebihi 100 meter"
+                ],
+                correct: 1,
+                explanation: "Lilitan berpasangan (twisted pair) dirancang untuk saling membatalkan interferensi elektromagnetik dan mengurangi crosstalk antar pasangan kabel."
+            },
+            {
+                id: 8,
+                category: "Kabel UTP",
+                hots: true,
+                question: "Sebuah pabrik memasang kabel UTP melewati area mesin las listrik tegangan tinggi. Akibatnya, transmisi data sering mengalami packet loss parah. Solusi fisik yang paling tepat tanpa mengganti jenis media ke Fiber Optic adalah...",
+                options: [
+                    "A. Mengganti konektor RJ-45 dengan konektor RJ-11",
+                    "B. Mengganti kabel UTP menjadi kabel STP (Shielded Twisted Pair) atau FTP dengan grounding",
+                    "C. Mengubah susunan kabel dari T568B menjadi T568A",
+                    "D. Memotong panjang kabel menjadi kurang dari 10 meter",
+                    "E. Memasang amplifier pada pertengahan kabel"
+                ],
+                correct: 1,
+                explanation: "Kabel STP/FTP memiliki pelindung aluminium foil (shield) yang efektif menangkal Interferensi Elektromagnetik (EMI) eksternal dari mesin berdaya listrik tinggi."
+            },
+            {
+                id: 9,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Panjang maksimal ideal transmisi sinyal data pada kabel UTP tanpa bantuan repeater/switch adalah...",
+                options: [
+                    "A. 50 meter",
+                    "B. 100 meter",
+                    "C. 150 meter",
+                    "D. 200 meter",
+                    "E. 500 meter"
+                ],
+                correct: 1,
+                explanation: "Batas panjang maksimal segmen kabel UTP standar (seperti Cat5e/Cat6) adalah 100 meter (90 meter kabel permanen + 10 meter patch cord) untuk mencegah degradasi sinyal (attenuation)."
+            },
+            {
+                id: 10,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Kabel yang digunakan khusus untuk menghubungkan port Console pada Router/Switch Cisco ke Port COM/USB komputer guna konfigurasi CLI adalah kabel...",
+                options: [
+                    "A. Straight-Through",
+                    "B. Crossover",
+                    "C. Rollover",
+                    "D. Coaxial",
+                    "E. Loopback"
+                ],
+                correct: 2,
+                explanation: "Kabel Rollover (Console Cable) memiliki susunan pin yang terbalik sempurna antara ujung satu (1-8) dan ujung lainnya (8-1) untuk keperluan manajemen perangkat via port console."
+            },
+            {
+                id: 11,
+                category: "Kabel UTP",
+                hots: true,
+                question: "Saat mengupas jaket luar kabel UTP untuk dikrimping, seorang siswa mengupas sepanjang 5 cm dan membiarkan pilinan kawat terbuka lebar sebelum masuk ke RJ-45. Dampak teknis yang akan terjadi pada kualitas jaringan adalah...",
+                options: [
+                    "A. Kabel tidak bisa mengalirkan arus PoE",
+                    "B. Terjadi Near-End Crosstalk (NEXT) yang tinggi sehingga sinyal tidak stabil",
+                    "C. Hambatan listrik kabel turun menjadi 0 Ohm",
+                    "D. Kecepatan transfer otomatis naik menjadi 10 Gbps",
+                    "E. Kabel menjadi tahan terhadap air dan benturan"
+                ],
+                correct: 1,
+                explanation: "Membuka pilinan kawat UTP terlalu panjang di dekat konektor dapat merusak perlindungan alami terhadap crosstalk (NEXT), yang menyebabkan interferensi dan kerugian sinyal."
+            },
+            {
+                id: 12,
+                category: "Kabel UTP",
+                hots: false,
+                question: "Alat yang digunakan khusus untuk menjepit konektor RJ-45 pada kabel UTP agar pin tembaga menancap pada kawat adalah...",
+                options: [
+                    "A. Tang Kombinasi",
+                    "B. Crimping Tool",
+                    "C. Stripper Cable",
+                    "D. LAN Tester",
+                    "E. Tang Potong"
+                ],
+                correct: 1,
+                explanation: "Crimping Tool adalah tang khusus yang presisi untuk menjepit pin konektor RJ-45 atau RJ-11 ke kawat kabel UTP."
+            },
 
-    <!-- Footer Section -->
-    <footer>
-      <div class="lineFooter"></div>
-      <div class="contentFooter">
-        <img
-          src="../../assets/img/logoKaryaGuna.png"
-          alt="Logo SMK Karya Guna"
-        />
-        <div class="descFooter">
-          <p>SMK Karya Guna Jakarta</p>
-          <p>
-            Jl. Manggarai Utara 1 No.21, RT.15/RW.4, Manggarai, Kec. Tebet, Kota
-            Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12850
-          </p>
-          <br />
-          <p>Email: smkkaryagunajakarta@gmail.com</p>
-          <p>Telepon: +6281 1810 2640</p>
-        </div>
-        <div class="navFooter">
-          <div class="leftNavFooter">
-            <p>T E N T A N G&nbsp; S E K O L A H</p>
-            <ul>
-              <li><a href="../sejarah-sekolah/">Sejarah</a></li>
-              <li><a href="../visi-misi/">Visi & Misi</a></li>
-              <li>
-                <a href="../struktur-organisasi/">Struktur Organisasi</a>
-              </li>
-              <li>
-                <a href="#">Profil Kepala Sekolah</a>
-              </li>
-              <li>
-                <a href="../sarana-dan-fasilitas/">Sarana & Fasilitas</a>
-              </li>
-            </ul>
-            <br />
-            <p><a href="../../ppdb/">P P D B</a></p>
-          </div>
-          <div class="rightNavFooter">
-            <p>I N F O R M A S I</p>
-            <ul>
-              <li>
-                <a href="../../informasi/kalender-pendidikan/"
-                  >Kalender Pendidikan</a
-                >
-              </li>
-              <li>
-                <a href="../../informasi/ekstrakulikuler/">Ekstrakulikuler</a>
-              </li>
-            </ul>
-            <br />
-            <p><a href="../../#contact-section">K O N T A K</a></p>
-          </div>
-        </div>
-      </div>
-      <div class="lineFooter"></div>
-    </footer>
-    <script src="../../assets/js/jquery-3.6.3.min.js"></script>
-    <script src="./assets/js/app.js"></script>
-  </body>
+            // --- BAB 2: DASAR OSI LAYER (13 SOAL) ---
+            {
+                id: 13,
+                category: "OSI Layer",
+                hots: false,
+                question: "Model referensi OSI (Open Systems Interconnection) terdiri dari berapa lapisan (layer)...",
+                options: [
+                    "A. 4 Layer",
+                    "B. 5 Layer",
+                    "C. 6 Layer",
+                    "D. 7 Layer",
+                    "E. 8 Layer"
+                ],
+                correct: 3,
+                explanation: "Model OSI terdiri dari 7 lapisan: 1. Physical, 2. Data Link, 3. Network, 4. Transport, 5. Session, 6. Presentation, 7. Application."
+            },
+            {
+                id: 14,
+                category: "OSI Layer",
+                hots: false,
+                question: "Layer OSI yang bertanggung jawab untuk menentukan rute terbaik (routing) dan menangani pengalamatan logika (IP Address) adalah...",
+                options: [
+                    "A. Physical Layer",
+                    "B. Data Link Layer",
+                    "C. Network Layer",
+                    "D. Transport Layer",
+                    "E. Application Layer"
+                ],
+                correct: 2,
+                explanation: "Network Layer (Layer 3) menangani IP Addressing, pengalamatan logis, dan penentuan jalur data (routing)."
+            },
+            {
+                id: 15,
+                category: "OSI Layer",
+                hots: false,
+                question: "Unit Data (PDU - Protocol Data Unit) yang bekerja pada Layer 2 (Data Link) disebut...",
+                options: [
+                    "A. Bit",
+                    "B. Frame",
+                    "C. Packet",
+                    "D. Segment",
+                    "E. Data"
+                ],
+                correct: 1,
+                explanation: "PDU pada OSI Layer: Layer 1 = Bit, Layer 2 = Frame, Layer 3 = Packet, Layer 4 = Segment/Datagram, Layer 5-7 = Data."
+            },
+            {
+                id: 16,
+                category: "OSI Layer",
+                hots: true,
+                question: "Seorang pengguna membuka browser dan mengetik alamat 'https://www.google.com'. Setelah menekan Enter, terjadi proses enkripsi data SSL/TLS dan kompresi format halaman. Proses enkripsi dan format data ini terjadi pada OSI Layer ke...",
+                options: [
+                    "A. Layer 7 (Application)",
+                    "B. Layer 6 (Presentation)",
+                    "C. Layer 5 (Session)",
+                    "D. Layer 4 (Transport)",
+                    "E. Layer 3 (Network)"
+                ],
+                correct: 1,
+                explanation: "Presentation Layer (Layer 6) bertanggung jawab atas format data, enkripsi/dekripsi (seperti SSL/TLS), serta kompresi data."
+            },
+            {
+                id: 17,
+                category: "OSI Layer",
+                hots: false,
+                question: "Protokol seperti TCP (Transmission Control Protocol) dan UDP (User Datagram Protocol) bekerja pada OSI Layer...",
+                options: [
+                    "A. Application Layer",
+                    "B. Session Layer",
+                    "C. Transport Layer",
+                    "D. Network Layer",
+                    "E. Data Link Layer"
+                ],
+                correct: 2,
+                explanation: "TCP dan UDP adalah protokol utama yang bertugas mengatur pengiriman data ujung-ke-ujung (end-to-end) pada Transport Layer (Layer 4)."
+            },
+            {
+                id: 18,
+                category: "OSI Layer",
+                hots: true,
+                question: "Seorang administrator jaringan melakukan PING ke alamat IP Server dan mendapat respon 'Request Timed Out'. Namun ketika kabel LAN dicabut, status berubah menjadi 'Destination Host Unreachable'. Pada pengujian awal ini, admin sedang mendiagnosa gangguan pada layer...",
+                options: [
+                    "A. Layer Application & Presentation",
+                    "B. Layer Physical & Network",
+                    "C. Layer Session & Transport",
+                    "D. Layer Data Link & Presentation",
+                    "E. Layer Application & Transport"
+                ],
+                correct: 1,
+                explanation: "Pencabutan kabel berkaitan dengan konektivitas fisik (Physical Layer / Layer 1), sedangkan balasan IP tidak tercapai berkaitan dengan routing IP (Network Layer / Layer 3)."
+            },
+            {
+                id: 19,
+                category: "OSI Layer",
+                hots: false,
+                question: "Fungsi utama dari Data Link Layer (Layer 2) dalam model OSI adalah...",
+                options: [
+                    "A. Membentuk sinyal listrik atau cahaya untuk dikirim lewat media",
+                    "B. Mengatur pengalamatan fisik (MAC Address) dan mendeteksi kesalahan error (FCS)",
+                    "C. Membagi data menjadi segmen-segmen dan memberikan nomor urut",
+                    "D. Menyediakan antarmuka langsung antara aplikasi pengolah kata dengan jaringan",
+                    "E. Mengatur sesi komunikasi dialog antar komputer"
+                ],
+                correct: 1,
+                explanation: "Data Link Layer mengelola pengalamatan fisik (MAC Address), pembentukan Frame, flow control, serta deteksi kesalahan menggunakan Frame Check Sequence (FCS)."
+            },
+            {
+                id: 20,
+                category: "OSI Layer",
+                hots: false,
+                question: "Proses pembungkusan data dari layer atas ke layer bawah dengan menambahkan header/trailer pada setiap lapisan OSI disebut...",
+                options: [
+                    "A. Decapsulation",
+                    "B. Encapsulation",
+                    "C. Segmentation",
+                    "D. Multiplexing",
+                    "E. Modulation"
+                ],
+                correct: 1,
+                explanation: "Encapsulation adalah proses pembungkusan data dengan header di setiap layer dari Application turun hingga Physical layer."
+            },
+            {
+                id: 21,
+                category: "OSI Layer",
+                hots: true,
+                question: "Aplikasi video conference Zoom membutuhkan transmisi data waktu nyata (real-time) yang cepat dan toleran terhadap sedikit kehilangan paket data. Protokol Transport Layer manakah yang diprioritaskan?",
+                options: [
+                    "A. TCP (Reliable & Connection-oriented)",
+                    "B. UDP (Connectionless & Fast)",
+                    "C. HTTP (Hypertext Transfer)",
+                    "D. FTP (File Transfer)",
+                    "E. ICMP (Control Message)"
+                ],
+                correct: 1,
+                explanation: "UDP (User Datagram Protocol) tidak memerlukan handshake atau error recovery berbelit-belit sehingga sangat cocok untuk lalu lintas audio/video streaming real-time."
+            },
+            {
+                id: 22,
+                category: "OSI Layer",
+                hots: false,
+                question: "Mac Address (Media Access Control) berukuran 48-bit dan tertanam permanen pada NIC. MAC Address bekerja pada lapisan...",
+                options: [
+                    "A. Physical Layer",
+                    "B. Data Link Layer (Sublayer MAC)",
+                    "C. Network Layer",
+                    "D. Transport Layer",
+                    "E. Session Layer"
+                ],
+                correct: 1,
+                explanation: "MAC Address adalah alamat fisik yang bekerja pada Data Link Layer (khususnya sublayer MAC - Media Access Control)."
+            },
+            {
+                id: 23,
+                category: "OSI Layer",
+                hots: false,
+                question: "Protokol ARP (Address Resolution Protocol) berfungsi untuk mengonversi...",
+                options: [
+                    "A. Nama Domain menjadi IP Address",
+                    "B. IP Address menjadi MAC Address",
+                    "C. MAC Address menjadi IP Address",
+                    "D. IP Private menjadi IP Public",
+                    "E. Port Number menjadi IP Address"
+                ],
+                correct: 1,
+                explanation: "ARP berfungsi memetakan (resolusi) IP Address (Layer 3) ke MAC Address (Layer 2) pada jaringan lokal."
+            },
+            {
+                id: 24,
+                category: "OSI Layer",
+                hots: true,
+                question: "Di kantor, pengguna tidak bisa mengakses website Google via browser (muncul 'Server Not Found'), tetapi saat melakukan 'ping 8.8.8.8' koneksi berhasil/Reply. Berdasarkan model OSI, layer mana yang mengalami masalah?",
+                options: [
+                    "A. Physical Layer (Kabel putus)",
+                    "B. Network Layer (IP Address salah)",
+                    "C. Application Layer (Layanan DNS gagal meresolusi nama domain)",
+                    "D. Data Link Layer (MAC Address konflik)",
+                    "E. Transport Layer (Port terblokir total)"
+                ],
+                correct: 2,
+                explanation: "Ping ke IP berhasil berarti Layer 1-4 berfungsi normal. Kegagalan membuka nama domain web menunjukkan masalah pada DNS (Domain Name System) yang berada di Application Layer."
+            },
+            {
+                id: 25,
+                category: "OSI Layer",
+                hots: false,
+                question: "Layer OSI yang berfungsi menjaga, memelihara, dan mengakhiri sesi koneksi dialog antar aplikasi komputer adalah...",
+                options: [
+                    "A. Transport Layer",
+                    "B. Session Layer",
+                    "C. Presentation Layer",
+                    "D. Application Layer",
+                    "E. Network Layer"
+                ],
+                correct: 1,
+                explanation: "Session Layer (Layer 5) bertugas membuka, mengelola, serta menutup sesi komunikasi antar aplikasi."
+            },
+
+            // --- BAB 3: PERANGKAT JARINGAN (12 SOAL) ---
+            {
+                id: 26,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Perangkat jaringan yang bekerja pada Layer 1 (Physical) dan meneruskan data secara broadcast ke seluruh port tanpa membaca MAC Address adalah...",
+                options: [
+                    "A. Switch Unmanaged",
+                    "B. Switch Managed",
+                    "C. Hub",
+                    "D. Router",
+                    "E. Bridge"
+                ],
+                correct: 2,
+                explanation: "Hub adalah perangkat Layer 1 pasif/aktif yang mengirimkan sinyal fisik ke semua port yang terhubung tanpa pemfilteran (satu collision domain besar)."
+            },
+            {
+                id: 27,
+                category: "Perangkat Jaringan",
+                hots: true,
+                question: "Sebuah jaringan LAN kantor mengalami masalah tabrakan data (collision) yang tinggi karena masih menggunakan Hub lama. Solusi terbaik adalah mengganti Hub tersebut dengan Switch, KARENA Switch...",
+                options: [
+                    "A. Mengubah sinyal digital menjadi analog",
+                    "B. Membagi setiap port menjadi Collision Domain yang terpisah (Dedicated Bandwidth)",
+                    "C. Memiliki antena pemancar sinyal nirkabel lebih kuat",
+                    "D. Otomatis terhubung ke jaringan internet publik tanpa modem",
+                    "E. Menyimpan file data kantor secara terpusat"
+                ],
+                correct: 1,
+                explanation: "Switch bekerja di Layer 2 dan membuat tabel MAC address (CAM table), sehingga setiap port pada Switch membentuk 1 collision domain terpisah."
+            },
+            {
+                id: 28,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Perangkat jaringan yang berfungsi menghubungkan dua atau lebih jaringan yang BERBEDA subnet/IP Address dan melakukan routing paket data adalah...",
+                options: [
+                    "A. Switch Layer 2",
+                    "B. Access Point",
+                    "C. Router",
+                    "D. Repeater",
+                    "E. Network Interface Card"
+                ],
+                correct: 2,
+                explanation: "Router bekerja di Layer 3 (Network) dan berfungsi menghubungkan jaringan yang berbeda segmen/subnet serta menentukan rute lalu lintas data."
+            },
+            {
+                id: 29,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Fungsi utama perangkat Repeater pada jaringan lokal adalah...",
+                options: [
+                    "A. Memperkuat dan me-regenerasi sinyal data yang melemah akibat jarak jauh",
+                    "B. Mengamankan jaringan dari serangan virus",
+                    "C. Mengubah alamat IP Private menjadi IP Public",
+                    "D. Menyimpan cache halaman website",
+                    "E. Mengatur alokasi lebar pita (bandwidth)"
+                ],
+                correct: 0,
+                explanation: "Repeater memperkuat sinyal fisik yang terdegradasi (attenuation) agar dapat menempuh jarak yang lebih jauh."
+            },
+            {
+                id: 30,
+                category: "Perangkat Jaringan",
+                hots: true,
+                question: "Sebuah perusahaan memiliki 200 komputer. Terjadi Broadcast Storm yang membuat seluruh jaringan melambat total. Perangkat apa yang harus digunakan untuk MEMBATASI (mengisolasi) Broadcast Domain menjadi beberapa subnet?",
+                options: [
+                    "A. Repeater",
+                    "B. Hub",
+                    "C. Switch Unmanaged",
+                    "D. Router (atau Switch Layer 3 / VLAN)",
+                    "E. Network Interface Card"
+                ],
+                correct: 3,
+                explanation: "Router memutus Broadcast Domain. Setiap port pada Router merupakan Broadcast Domain terpisah, sehingga lalu lintas broadcast tidak akan membanjiri subnet lain."
+            },
+            {
+                id: 31,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Kartu jaringan yang terpasang pada slot ekspansi motherboard PC atau laptop agar komputer dapat terhubung ke jaringan kabel dipanggil...",
+                options: [
+                    "A. VGA Card",
+                    "B. Sound Card",
+                    "C. NIC (Network Interface Card)",
+                    "D. Power Supply Unit",
+                    "E. RAM"
+                ],
+                correct: 2,
+                explanation: "NIC (Network Interface Card) / LAN Card adalah perangkat keras yang menyediakan antarmuka fisik dan alamat MAC untuk komunikasi jaringan."
+            },
+            {
+                id: 32,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Teknologi pada Switch Managed yang memungkinkan pengelompokan port secara logika menjadi beberapa kelompok jaringan lokal terpisah walaupun berada pada satu Switch fisik adalah...",
+                options: [
+                    "A. VPN",
+                    "B. VLAN (Virtual Local Area Network)",
+                    "C. VTP",
+                    "D. NAT",
+                    "E. DHCP"
+                ],
+                correct: 1,
+                explanation: "VLAN mengisolasi broadcast domain dan grup komputer secara logis pada satu perangkat Switch fisik."
+            },
+            {
+                id: 33,
+                category: "Perangkat Jaringan",
+                hots: true,
+                question: "Perusahaan memerlukan pemasangan Access Point di atap gedung yang jauh dari colokan listrik AC. Perangkat Switch jenis apa yang harus dibeli agar dapat menyalurkan daya listrik sekaligus data melalui kabel UTP tunggal?",
+                options: [
+                    "A. Switch Fast Ethernet",
+                    "B. Switch PoE (Power over Ethernet)",
+                    "C. Switch Unmanaged 8-Port",
+                    "D. Switch Modular SFP",
+                    "E. Switch Fiber Channel"
+                ],
+                correct: 1,
+                explanation: "Switch PoE (Power over Ethernet) mampu mengirimkan arus listrik DC bersamaan dengan sinyal data melalui kabel UTP Cat5e/Cat6 ke perangkat seperti Access Point atau IP Camera."
+            },
+            {
+                id: 34,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Perangkat yang berfungsi mengubah sinyal digital dari komputer menjadi sinyal analog untuk ditransmisikan melalui saluran telepon/kabel, dan sebaliknya adalah...",
+                options: [
+                    "A. Modem",
+                    "B. Router",
+                    "C. Switch",
+                    "D. Bridge",
+                    "E. Hub"
+                ],
+                correct: 0,
+                explanation: "Modem (Modulator Demodulator) melakukan modulasi (digital ke analog) dan demodulasi (analog ke digital)."
+            },
+            {
+                id: 35,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Perangkat Bridge pada jaringan lokal berfungsi untuk...",
+                options: [
+                    "A. Menghubungkan dua segmen jaringan lokal (LAN) di layer Data Link berdasarkan MAC Address",
+                    "B. Menerjemahkan domain DNS menjadi IP Address",
+                    "C. Membagikan IP secara otomatis ke client",
+                    "D. Menyediakan koneksi internet nirkabel",
+                    "E. Melindungi jaringan dari serangan hacker"
+                ],
+                correct: 0,
+                explanation: "Bridge menghubungkan dua segmen LAN yang berbeda dan menyaring lalu lintas data berdasarkan tabel MAC address."
+            },
+            {
+                id: 36,
+                category: "Perangkat Jaringan",
+                hots: true,
+                question: "Di sebuah minimarket, terdapat Switch Unmanaged. Saat port 1 dicolokkan kabel LAN yang terhubung kembali ke port 2 pada Switch yang sama, seluruh jaringan minimarket langsung lumpuh. Fenomena ini disebut...",
+                options: [
+                    "A. Routing Loop",
+                    "B. Switching/Bridging Loop (Broadcast Storm)",
+                    "C. IP Address Conflict",
+                    "D. Gateway Unreachable",
+                    "E. Overheating Switch"
+                ],
+                correct: 1,
+                explanation: "Menghubungkan dua port pada Switch unmanaged menciptakan loop (Bridging Loop), yang memicu Broadcast Storm tak terbatas hingga melumpuhkan Switch."
+            },
+            {
+                id: 37,
+                category: "Perangkat Jaringan",
+                hots: false,
+                question: "Perangkat jaringan periferal yang berfungsi menghubungkan jaringan LAN ke jaringan luar (seperti Internet) dan bertindak sebagai 'pintu keluar masuk' disebut...",
+                options: [
+                    "A. Access Point",
+                    "B. Gateway",
+                    "C. Repeater",
+                    "D. Hub",
+                    "E. Crimper"
+                ],
+                correct: 1,
+                explanation: "Gateway (sering kali merupakan interface Router) bertindak sebagai gerbang penghubung antar dua jaringan dengan protokol/subnet berbeda."
+            },
+
+            // --- BAB 4: WIRELESS / NIRKABEL (13 SOAL) ---
+            {
+                id: 38,
+                category: "Wireless",
+                hots: false,
+                question: "Standar protokol IEEE yang mengatur tentang teknologi jaringan nirkabel (Wireless LAN / Wi-Fi) adalah...",
+                options: [
+                    "A. IEEE 802.3",
+                    "B. IEEE 802.11",
+                    "C. IEEE 802.15",
+                    "D. IEEE 802.1X",
+                    "E. IEEE 802.5"
+                ],
+                correct: 1,
+                explanation: "IEEE 802.11 adalah kelompok standar internasional untuk komunikasi WLAN (Wi-Fi). (Sedangkan 802.3 untuk Ethernet kabel)."
+            },
+            {
+                id: 39,
+                category: "Wireless",
+                hots: false,
+                question: "Frekuensi Wi-Fi standar yang memiliki jangkauan sinyal lebih luas dan mampu menembus halangan tembok lebih baik, namun rawan interferensi adalah...",
+                options: [
+                    "A. 5.0 GHz",
+                    "B. 2.4 GHz",
+                    "C. 60 GHz",
+                    "D. 900 MHz",
+                    "E. 10 GHz"
+                ],
+                correct: 1,
+                explanation: "Frekuensi 2.4 GHz memiliki panjang gelombang lebih besar sehingga dapat menembus objek padat/tembok dan menjangkau area lebih luas dibandingkan 5 GHz."
+            },
+            {
+                id: 40,
+                category: "Wireless",
+                hots: true,
+                question: "Di sebuah warkop yang padat, pemilik memasang 3 Access Point (AP) dengan pita frekuensi 2.4 GHz. Agar ketiga AP tersebut tidak saling mengalami interferensi gelombang (Co-Channel Interference), pengaturan Channel non-overlapping yang tepat adalah...",
+                options: [
+                    "A. Channel 1, Channel 2, dan Channel 3",
+                    "B. Channel 1, Channel 6, dan Channel 11",
+                    "C. Channel 2, Channel 4, dan Channel 6",
+                    "D. Channel 5, Channel 6, dan Channel 7",
+                    "E. Channel 10, Channel 11, dan Channel 12"
+                ],
+                correct: 1,
+                explanation: "Pada pita frekuensi 2.4 GHz, hanya terdapat 3 channel standar yang bersih tanpa saling tumpang tindih (non-overlapping), yaitu Channel 1, 6, dan 11."
+            },
+            {
+                id: 41,
+                category: "Wireless",
+                hots: false,
+                question: "Nama identitas unik jaringan Wi-Fi yang dipancarkan oleh Access Point agar dapat ditemukan oleh perangkat client disebut...",
+                options: [
+                    "A. IP Address",
+                    "B. MAC Address",
+                    "C. SSID (Service Set Identifier)",
+                    "D. WPA Key",
+                    "E. Subnet Mask"
+                ],
+                correct: 2,
+                explanation: "SSID (Service Set Identifier) adalah nama publik dari jaringan nirkabel (Wi-Fi)."
+            },
+            {
+                id: 42,
+                category: "Wireless",
+                hots: false,
+                question: "Jenis enkripsi keamanan nirkabel Wi-Fi termurah dan tertua yang sangat rentan serta mudah dibobol dalam hitungan menit adalah...",
+                options: [
+                    "A. WEP (Wired Equivalent Privacy)",
+                    "B. WPA2-PSK",
+                    "C. WPA3-Enterprise",
+                    "D. AES-256",
+                    "E. 802.1X EAP"
+                ],
+                correct: 0,
+                explanation: "WEP adalah standar enkripsi lama yang memiliki kelemahan algoritma parah dan tidak direkomendasikan lagi."
+            },
+            {
+                id: 43,
+                category: "Wireless",
+                hots: true,
+                question: "Sebuah kantor menginginkan setiap karyawan yang terhubung ke Wi-Fi tidak menggunakan satu password bersama, melainkan harus login menggunakan Username dan Password pribadi masing-masing yang terhubung ke server RADIUS. Jenis keamanan Wi-Fi apa yang wajib dikonfigurasi?",
+                options: [
+                    "A. WPA2-Personal (PSK)",
+                    "B. WPA2/WPA3 Enterprise",
+                    "C. Open Authentication",
+                    "D. Hidden SSID",
+                    "E. WEP 128-bit"
+                ],
+                correct: 1,
+                explanation: "WPA2/WPA3 Enterprise menggunakan server otentikasi eksternal (seperti RADIUS) untuk memverifikasi akun pengguna secara individual (Username & Password)."
+            },
+            {
+                id: 44,
+                category: "Wireless",
+                hots: false,
+                question: "Topologi jaringan nirkabel di mana perangkat komputer terhubung langsung satu sama lain secara peer-to-peer TANPA melalui perangkat Access Point disebut mode...",
+                options: [
+                    "A. Infrastructure Mode",
+                    "B. Ad-Hoc Mode",
+                    "C. Roaming Mode",
+                    "D. Repeater Mode",
+                    "E. AP Client Mode"
+                ],
+                correct: 1,
+                explanation: "Mode Ad-Hoc adalah komunikasi nirkabel langsung antar-perangkat tanpa memedulikan terpusatnya Access Point."
+            },
+            {
+                id: 45,
+                category: "Wireless",
+                hots: true,
+                question: "Seorang siswa mencoba menyambungkan HP ke Wi-Fi sekolah. Sinyal penuh dan kata sandi benar, namun status HP terus menunjukkan 'Connecting...' lalu gagal terhubung. Admin sekolah menjelaskan bahwa alamat fisik HP siswa belum terdaftar di router. Fitur keamanan apa yang diterapkan sekolah?",
+                options: [
+                    "A. Port Forwarding",
+                    "B. MAC Address Filtering",
+                    "C. Bandwidth Limiter",
+                    "D. DHCP Binding",
+                    "E. DMZ Host"
+                ],
+                correct: 1,
+                explanation: "MAC Filtering membatasi akses Wi-Fi hanya untuk alamat MAC terdaftar (whitelist) atau menolak alamat MAC tertentu (blacklist)."
+            },
+            {
+                id: 46,
+                category: "Wireless",
+                hots: false,
+                question: "Standar Wi-Fi 6 dikodekan dalam standar resmi IEEE sebagai...",
+                options: [
+                    "A. 802.11a",
+                    "B. 802.11g",
+                    "C. 802.11n",
+                    "D. 802.11ac",
+                    "E. 802.11ax"
+                ],
+                correct: 4,
+                explanation: "Penamaan Wi-Fi: Wi-Fi 4 = 802.11n, Wi-Fi 5 = 802.11ac, dan Wi-Fi 6 = 802.11ax."
+            },
+            {
+                id: 47,
+                category: "Wireless",
+                hots: true,
+                question: "Dua buah gedung sekolah berjarak 1 KM ingin dihubungkan secara wireless. Di antara kedua gedung tersebut terdapat pepohonan rimbun yang menghalangi garis pandang langsung (Line of Sight). Dampak utama pada koneksi Wi-Fi outdoor tersebut adalah...",
+                options: [
+                    "A. Sinyal akan mengalami redaman (attenuation) & refleksi tinggi sehingga throughput turun drastis",
+                    "B. Alamat IP Address perangkat akan otomatis teracak",
+                    "C. Frekuensi gelombang otomatis naik dari 2.4 GHz ke 60 GHz",
+                    "D. Akses internet menjadi lebih cepat karena terbiaskan oleh daun",
+                    "E. Tidak ada pengaruh sama sekali pada koneksi"
+                ],
+                correct: 0,
+                explanation: "Jaringan nirkabel jarak jauh membutuhkan Line of Sight (LOS) dan area Fresnel Zone yang bebas hambatan. Pepohonan dapat menyerap dan memantulkan sinyal microwave Wi-Fi secara signifikan."
+            },
+            {
+                id: 48,
+                category: "Wireless",
+                hots: false,
+                question: "Antena nirkabel yang memancarkan sinyal Wi-Fi ke segala arah 360 derajat secara horizontal adalah jenis antena...",
+                options: [
+                    "A. Directional Antenna",
+                    "B. Grid Antenna",
+                    "C. Omnidirectional Antenna",
+                    "D. Yagi Antenna",
+                    "E. Patch Panel Antenna"
+                ],
+                correct: 2,
+                explanation: "Antena Omnidirectional memancarkan dan menerima sinyal radiasi 360 derajat di sekitar cakupannya."
+            },
+            {
+                id: 49,
+                category: "Wireless",
+                hots: true,
+                question: "Di area publik seperti Bandara atau Hotel, saat pengguna menyambungkan Wi-Fi, browser otomatis terbuka dan meminta centang 'Syarat & Ketentuan' atau memasukkan voucher sebelum internet aktif. Halaman web verifikasi ini dikenal sebagai...",
+                options: [
+                    "A. Web Server",
+                    "B. Captive Portal",
+                    "C. Proxy Gateway",
+                    "D. Landing Page HTML",
+                    "E. Firefall Authentication"
+                ],
+                correct: 1,
+                explanation: "Captive Portal adalah halaman web otentikasi yang mencegat lalu lintas HTTP/HTTPS client sebelum diizinkan mengakses internet luar."
+            },
+            {
+                id: 50,
+                category: "Wireless",
+                hots: true,
+                question: "Masalah 'Hidden Node Problem' pada jaringan nirkabel terjadi ketika dua client berada dalam jangkauan Access Point tetapi tidak saling mendeteksi keberadaan satu sama lain. Mekanisme protokol IEEE 802.11 yang digunakan untuk mengatasi tabrakan ini adalah...",
+                options: [
+                    "A. CSMA/CD (Carrier Sense Multiple Access with Collision Detection)",
+                    "B. RTS/CTS (Request to Send / Clear to Send)",
+                    "C. WPA Handshake",
+                    "D. Automatic Frequency Hopping",
+                    "E. DHCP Lease Time"
+                ],
+                correct: 1,
+                explanation: "Mekanisme RTS/CTS (Request to Send / Clear to Send) digunakan pada Wi-Fi (CSMA/CA) untuk mengkoordinasikan pengiriman paket guna menghindari tabrakan akibat hidden node."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questionsData.length).fill(null);
+        let doubtfulAnswers = new Array(questionsData.length).fill(false);
+        let timerInterval = null;
+        let totalTimeSeconds = 90 * 60; // 90 Minutes
+        let studentInfo = { name: "", className: "" };
+
+        // Start Exam Function
+        function startExam(e) {
+            e.preventDefault();
+            const name = document.getElementById('studentName').value.trim();
+            const className = document.getElementById('studentClass').value.trim();
+
+            if (!name || !className) return;
+
+            studentInfo.name = name;
+            studentInfo.className = className;
+
+            document.getElementById('displayName').innerText = `${name} (${className})`;
+            document.getElementById('startScreen').classList.add('d-none');
+            document.getElementById('examScreen').classList.remove('d-none');
+
+            renderQuestionGrid();
+            loadQuestion(0);
+            startTimer();
+        }
+
+        // Timer Function
+        function startTimer() {
+            const timerDisplay = document.getElementById('timer');
+            timerInterval = setInterval(() => {
+                if (totalTimeSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu ujian telah habis!");
+                    finishExam();
+                    return;
+                }
+                totalTimeSeconds--;
+                const mins = Math.floor(totalTimeSeconds / 60);
+                const secs = totalTimeSeconds % 60;
+                timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
+                if (totalTimeSeconds < 300) { // Less than 5 mins
+                    document.getElementById('timerContainer').classList.replace('bg-danger', 'bg-warning');
+                    document.getElementById('timerContainer').classList.add('text-dark');
+                }
+            }, 1000);
+        }
+
+        // Render Sidebar Navigation Grid
+        function renderQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const btn = document.createElement('button');
+                btn.className = `btn question-number-btn border ${getQuestionStatusClass(index)}`;
+                btn.id = `qbtn-${index}`;
+                btn.innerText = index + 1;
+                btn.onclick = () => loadQuestion(index);
+                grid.appendChild(btn);
+            });
+        }
+
+        function getQuestionStatusClass(index) {
+            if (index === currentQuestion) return 'active-q';
+            if (doubtfulAnswers[index]) return 'doubtful';
+            if (userAnswers[index] !== null) return 'answered';
+            return 'bg-light text-dark';
+        }
+
+        function updateGridButtons() {
+            questionsData.forEach((_, index) => {
+                const btn = document.getElementById(`qbtn-${index}`);
+                if (btn) {
+                    btn.className = `btn question-number-btn border ${getQuestionStatusClass(index)}`;
+                }
+            });
+        }
+
+        // Load Single Question View
+        function loadQuestion(index) {
+            currentQuestion = index;
+            const q = questionsData[index];
+
+            document.getElementById('currentQNum').innerText = index + 1;
+            document.getElementById('categoryBadge').innerText = q.category;
+            
+            // HOTS Badge Toggle
+            const hotsBadge = document.getElementById('hotsBadge');
+            if (q.hots) {
+                hotsBadge.classList.remove('d-none');
+            } else {
+                hotsBadge.classList.add('d-none');
+            }
+
+            document.getElementById('questionText').innerHTML = q.question;
+
+            // Render Options
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, optIdx) => {
+                const isSelected = userAnswers[index] === optIdx;
+                const prefix = String.fromCharCode(65 + optIdx); // A, B, C, D, E
+
+                const optDiv = document.createElement('div');
+                optDiv.className = `option-container ${isSelected ? 'selected' : ''}`;
+                optDiv.onclick = () => selectOption(optIdx);
+
+                optDiv.innerHTML = `
+                    <div class="option-prefix">${prefix}</div>
+                    <div class="flex-grow-1">${opt.substring(3)}</div>
+                `;
+                optionsContainer.appendChild(optDiv);
+            });
+
+            // Doubtful Checkbox state
+            document.getElementById('doubtfulCheck').checked = doubtfulAnswers[index];
+
+            // Prev/Next Buttons state
+            document.getElementById('prevBtn').disabled = (index === 0);
+            const nextBtn = document.getElementById('nextBtn');
+            if (index === questionsData.length - 1) {
+                nextBtn.innerHTML = `Selesai <i class="fa-solid fa-check ms-2"></i>`;
+                nextBtn.className = "btn btn-success px-4 fw-semibold";
+                nextBtn.onclick = confirmSubmit;
+            } else {
+                nextBtn.innerHTML = `Berikutnya <i class="fa-solid fa-arrow-right ms-2"></i>`;
+                nextBtn.className = "btn btn-primary px-4 fw-semibold";
+                nextBtn.onclick = () => navigateQuestion(1);
+            }
+
+            updateGridButtons();
+        }
+
+        function selectOption(optIndex) {
+            userAnswers[currentQuestion] = optIndex;
+            loadQuestion(currentQuestion);
+        }
+
+        function toggleDoubtful() {
+            doubtfulAnswers[currentQuestion] = document.getElementById('doubtfulCheck').checked;
+            updateGridButtons();
+        }
+
+        function navigateQuestion(direction) {
+            const target = currentQuestion + direction;
+            if (target >= 0 && target < questionsData.length) {
+                loadQuestion(target);
+            }
+        }
+
+        // Submit Confirmation Modal
+        function confirmSubmit() {
+            const answeredCount = userAnswers.filter(a => a !== null).length;
+            document.getElementById('modalStatusText').innerText = `Anda telah menjawab ${answeredCount} dari 50 soal.`;
+            const submitModal = new bootstrap.Modal(document.getElementById('submitModal'));
+            submitModal.show();
+        }
+
+        // Calculate Score & Show Results
+        function finishExam() {
+            clearInterval(timerInterval);
+
+            // Hide Modal if open
+            const modalEl = document.getElementById('submitModal');
+            const modalObj = bootstrap.Modal.getInstance(modalEl);
+            if (modalObj) modalObj.hide();
+
+            // Hide Exam View, Show Result Screen
+            document.getElementById('examScreen').classList.add('d-none');
+            document.getElementById('timerContainer').classList.add('d-none');
+            document.getElementById('resultScreen').classList.remove('d-none');
+
+            // Calculation Logic
+            let correct = 0;
+            let incorrect = 0;
+            let unanswered = 0;
+
+            questionsData.forEach((q, index) => {
+                const userAns = userAnswers[index];
+                if (userAns === null) {
+                    unanswered++;
+                } else if (userAns === q.correct) {
+                    correct++;
+                } else {
+                    incorrect++;
+                }
+            });
+
+            // Score formula: (Correct / Total) * 100
+            const score = Math.round((correct / questionsData.length) * 100);
+
+            // Render Result Metrics
+            document.getElementById('resultStudentInfo').innerText = `Siswa: ${studentInfo.name} | Kelas: ${studentInfo.className}`;
+            document.getElementById('finalScore').innerText = score;
+            document.getElementById('correctCount').innerText = correct;
+            document.getElementById('incorrectCount').innerText = incorrect;
+            document.getElementById('unansweredCount').innerText = unanswered;
+
+            // Time Spent Calculation
+            const spentSecs = (90 * 60) - totalTimeSeconds;
+            const spentMins = Math.floor(spentSecs / 60);
+            document.getElementById('timeSpent').innerText = `${spentMins} Mnt`;
+
+            // Grade Badge
+            const gradeBadge = document.getElementById('gradeBadge');
+            if (score >= 85) {
+                gradeBadge.innerHTML = `<span class="badge bg-success fs-6"><i class="fa-solid fa-star me-1"></i>Sangat Baik (A)</span>`;
+            } else if (score >= 75) {
+                gradeBadge.innerHTML = `<span class="badge bg-primary fs-6"><i class="fa-solid fa-thumbs-up me-1"></i>Baik (B)</span>`;
+            } else if (score >= 60) {
+                gradeBadge.innerHTML = `<span class="badge bg-warning text-dark fs-6"><i class="fa-solid fa-triangle-exclamation me-1"></i>Cukup (C)</span>`;
+            } else {
+                gradeBadge.innerHTML = `<span class="badge bg-danger fs-6"><i class="fa-solid fa-xmark me-1"></i>Perlu Remidial (D)</span>`;
+            }
+
+            // Prepare Review List
+            renderReviewList();
+        }
+
+        // Toggle Review Visibility
+        function toggleReview() {
+            const reviewContainer = document.getElementById('reviewContainer');
+            if (reviewContainer.classList.contains('d-none')) {
+                reviewContainer.classList.remove('d-none');
+                reviewContainer.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                reviewContainer.classList.add('d-none');
+            }
+        }
+
+        // Render Review List
+        function renderReviewList() {
+            const reviewList = document.getElementById('reviewList');
+            reviewList.innerHTML = '';
+
+            questionsData.forEach((q, index) => {
+                const userAns = userAnswers[index];
+                const isCorrect = userAns === q.correct;
+                const isUnanswered = userAns === null;
+
+                let cardStatusClass = isCorrect ? 'correct' : 'incorrect';
+                let statusBadge = isCorrect 
+                    ? `<span class="badge bg-success"><i class="fa-solid fa-check me-1"></i>Benar</span>`
+                    : (isUnanswered 
+                        ? `<span class="badge bg-secondary"><i class="fa-solid fa-minus me-1"></i>Tidak Dijawab</span>`
+                        : `<span class="badge bg-danger"><i class="fa-solid fa-xmark me-1"></i>Salah</span>`);
+
+                const userAnsText = userAns !== null ? q.options[userAns] : '<i>Tidak dijawab</i>';
+                const correctAnsText = q.options[q.correct];
+
+                const card = document.createElement('div');
+                card.className = `card p-3 mb-3 review-card ${cardStatusClass} shadow-sm`;
+                card.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-bold text-primary">Soal #${index + 1} (${q.category})</span>
+                        <div>${statusBadge}</div>
+                    </div>
+                    <div class="mb-2 fw-semibold">${q.question}</div>
+                    <div class="small mb-1">Jawaban Anda: <b class="${isCorrect ? 'text-success' : 'text-danger'}">${userAnsText}</b></div>
+                    <div class="small mb-2">Kunci Jawaban: <b class="text-success">${correctAnsText}</b></div>
+                    <div class="bg-light p-2 rounded small text-muted border">
+                        <i class="fa-solid fa-lightbulb text-warning me-1"></i> <b>Pembahasan:</b> ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+    </script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/bootstrap.bundle.min.js"></script>
+</body>
 </html>
